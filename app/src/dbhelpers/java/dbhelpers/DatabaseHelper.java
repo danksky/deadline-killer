@@ -6,13 +6,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME ="KillDDL_DB"
+    private static final String DATABASE_NAME ="KillDDL_DB";
     private static final int DATABASE_VERSION = 1;
 
     // task table
     public static final String CREATE_TASKS_TABLE = "CREATE TABLE IF NOT EXISTS tasks" +
             "(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT)";
-    
+
 
 
     public DatabaseHelper(Context context) {
