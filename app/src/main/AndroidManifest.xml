@@ -11,9 +11,28 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <action android:name="com.pherodev.killddl.MainActivity"/>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.pherodev.killddl.MainActivity" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.TasksActivity"
+            android:label="@string/title_activity_tasks"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="com.pherodev.killddl.TasksActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.TaskInputActivity"
+            android:label="@string/title_activity_task_input"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="com.pherodev.killddl.TaskInputActivity" />
             </intent-filter>
         </activity>
     </application>

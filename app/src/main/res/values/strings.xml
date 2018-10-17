@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">KillDDL</string>
+    <string name="title_activity_tasks">TasksActivity</string>
+    <string name="title_activity_task_input">TaskInputActivity</string>
+    <string name="activity_task_input_title_placeholder">Title</string>
+    <string name="activity_task_input_deadline_header">Deadline</string>
+    <string name="activity_task_input_deadline_placeholder">Mon, Jan 1, 1970</string>
+    <string name="activity_task_input_description_placeholder">Description</string>
 </resources>

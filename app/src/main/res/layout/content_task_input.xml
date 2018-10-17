@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.TaskInputActivity"
+    tools:showIn="@layout/activity_task_input">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:id="@+id/constraint_layout_input_deadline">
+
+        <ImageView
+            android:id="@+id/image_view_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+
+        <TextView
+            android:id="@+id/text_view_input_task_deadline_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/activity_task_input_deadline_header"
+            app:layout_constraintStart_toEndOf="@+id/image_view_calendar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_view_input_task_deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/activity_task_input_deadline_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/text_view_input_task_deadline_header"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_input_task_deadline_header" />
+    </android.support.constraint.ConstraintLayout>
+    <View
+        android:id="@+id/divider_input_task"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/constraint_layout_input_deadline"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/constraint_layout_input_title"
+        app:layout_constraintTop_toBottomOf="@id/divider_input_task">
+
+        <EditText
+            android:id="@+id/edit_text_input_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@android:color/transparent"
+            android:hint="@string/activity_task_input_title_placeholder"
+            android:layout_margin="8dp"/>
+    </android.support.constraint.ConstraintLayout>
+    <View
+        android:id="@+id/divider2_input_task"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/constraint_layout_input_title"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout_input_description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="132dp"
+        app:layout_constraintTop_toBottomOf="@id/divider2_input_task">
+
+        <EditText
+            android:id="@+id/edit_text_input_task_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="top"
+            android:background="@android:color/transparent"
+            android:hint="@string/activity_task_input_description_placeholder"
+            android:inputType="textCapSentences|textMultiLine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
