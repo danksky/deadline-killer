@@ -3,4 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <data>
+        <import android:type="com.pherodev.killddl.models.TaskList"/>
+        <variable
+            android:name="taskList"
+            android:type="TaskList"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/taskListTitleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="@{taskList.title}"/>
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
