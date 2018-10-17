@@ -6,10 +6,15 @@ public class TaskList {
 
     private int id;
     private String title;
-    public ArrayList<Task> list;
+    public ArrayList<Task> list; // is this necessary?
 
     public TaskList() {
         list = new ArrayList<>();
+    }
+
+    public TaskList(int id, String title) {
+        this.id = id;
+        this.title = title;
     }
 
     public int getId() {
