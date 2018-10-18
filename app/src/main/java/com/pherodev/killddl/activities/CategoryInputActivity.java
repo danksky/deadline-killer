@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 
@@ -42,7 +43,8 @@ public class CategoryInputActivity extends AppCompatActivity {
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, titleEditText.getText(), Snackbar.LENGTH_LONG)
+                saveCategoryToDB();
+                Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
 
@@ -56,7 +58,8 @@ public class CategoryInputActivity extends AppCompatActivity {
 
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.Category.CATEGORY_COLUMN_TITLE, titleEditText.getText().toString());
-
+        long newRowId = database.insert(DatabaseHelper.Category.CATEGORY_TABLE_NAME, null, values);
+        Toast.makeText(this, "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
     }
 
 }

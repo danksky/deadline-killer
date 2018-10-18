@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 //import com.pherodev.killddl.databinding.ActivityMainBinding;
@@ -61,19 +62,20 @@ public class CategoryActivity extends AppCompatActivity {
 
 
     private void loadTaskListsFromDB() {
+        System.out.println("HEY THERE");
         SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
 
         Cursor cursor = database.rawQuery(DatabaseHelper.Category.SELECT_ALL_CATEGORIES, null);
 
-        if(cursor.moveToFirst()) {
-            while(!cursor.isAfterLast()) {
-                int id = cursor.getInt(cursor.getColumnIndex("task_list_id"));
-                String title = cursor.getString(cursor.getColumnIndex("task_list_title"));
-                categories.add(new Category(id, title));
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Category._ID));
+                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Category.CATEGORY_COLUMN_TITLE));
+                //categories.add(new Category(id, title));
                 System.out.println(id + " " + title);
-
-
             }
+        } finally {
+            cursor.close();
         }
     }
 }
