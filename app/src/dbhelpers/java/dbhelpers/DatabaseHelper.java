@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // taskLists table
     public static final String CREATE_TASKLISTS_TABLE = "CREATE TABLE IF NOT EXISTS taskLists" +
-            "(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT" +
+            "(task_list_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT" +
             ",title TEXT NOT NULL)";
 
     public DatabaseHelper(Context context) {
