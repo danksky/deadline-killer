@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.CategoryInputActivity"
+    tools:showIn="@layout/activity_category_input">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/constraint_layout_input_title"
+        app:layout_constraintTop_toBottomOf="@id/divider_input_task">
+
+        <EditText
+            android:id="@+id/edit_text_input_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@android:color/transparent"
+            android:hint="@string/activity_task_input_title_placeholder"
+            android:layout_margin="8dp"/>
+    </android.support.constraint.ConstraintLayout>
+    <View
+        android:id="@+id/divider2_input_task"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/constraint_layout_input_title"/>
+
+
+</android.support.constraint.ConstraintLayout>

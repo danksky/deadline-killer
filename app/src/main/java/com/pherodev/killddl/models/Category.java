@@ -1,18 +1,18 @@
 package com.pherodev.killddl.models;
 
 import java.util.ArrayList;
-
-public class TaskList {
+// TODO - probably actually want to call this category TBH LOL
+public class Category {
 
     private int id;
     private String title;
     public ArrayList<Task> list; // is this necessary?
 
-    public TaskList() {
+    public Category() {
         list = new ArrayList<>();
     }
 
-    public TaskList(int id, String title) {
+    public Category(int id, String title) {
         this.id = id;
         this.title = title;
     }

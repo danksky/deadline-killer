@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.CategoryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="com.pherodev.killddl.MainActivity" />
+                <action android:name="com.pherodev.killddl.CategoryActivity" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -35,6 +35,10 @@
                 <action android:name="com.pherodev.killddl.TaskInputActivity" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.CategoryInputActivity"
+            android:label="@string/title_activity_task_list_input"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

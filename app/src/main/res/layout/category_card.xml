@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <import type="com.pherodev.killddl.models.TaskList" />
+        <import type="com.pherodev.killddl.models.Category" />
         <variable
-            name="taskList"
-            type="TaskList"/>
+            name="category"
+            type="Category"/>
     </data>
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:text="@{taskList.title}"/>
+            android:text="@{category.title}"/>
     </LinearLayout>
 
 </layout>

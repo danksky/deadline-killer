@@ -6,4 +6,5 @@
     <string name="activity_task_input_deadline_header">Deadline</string>
     <string name="activity_task_input_deadline_placeholder">Mon, Jan 1, 1970</string>
     <string name="activity_task_input_description_placeholder">Description</string>
+    <string name="title_activity_task_list_input">TaskListInputActivity</string>
 </resources>
