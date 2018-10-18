@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " +
                 CATEGORY_TABLE_NAME;
 
-        // Table CRUD
+        // Table CRUD Operations
         public static final String SELECT_ALL_CATEGORIES = "SELECT * FROM " + CATEGORY_TABLE_NAME;
     }
 

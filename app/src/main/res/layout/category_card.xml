@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-        <import type="com.pherodev.killddl.models.Category" />
-        <variable
-            name="category"
-            type="Category"/>
-    </data>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
 
-    <LinearLayout
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/cv"
+    card_view:cardUseCompatPadding="true">
+
+    <TextView
+        android:id="@+id/category_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:textSize="30sp"/>
 
-        <TextView
-            android:id="@+id/taskListTitleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="@{category.title}"/>
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-</layout>
+</LinearLayout>
