@@ -1,5 +1,7 @@
 package com.pherodev.killddl.activities;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,11 @@ import android.support.v7.widget.RecyclerView;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.databinding.ActivityMainBinding;
+import com.pherodev.killddl.models.TaskList;
+
+import java.util.ArrayList;
+
+import dbhelpers.DatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager taskListsLayoutManager;
     private ActivityMainBinding mActivityMainBinding;
 
+    private ArrayList<TaskList> taskLists;
+
     private FloatingActionButton createTaskListFloatingActionButton;
 
     @Override
@@ -25,14 +34,25 @@ public class MainActivity extends AppCompatActivity {
         setTitle("Task Lists");
         mActivityMainBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_main);
-
-        // now get list of taskLists with SQLite
-
         setContentView(R.layout.activity_main);
-        loadTaskLists();
+        loadTaskListsFromDB();
+        
+
+
+
     }
 
-    private void loadTaskLists() {
+    private void loadTaskListsFromDB() {
+        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
 
+        Cursor cursor = database.rawQuery("SELECT * FROM taskLists", null);
+
+        if(cursor.moveToFirst()) {
+            while(!cursor.isAfterLast()) {
+                int id = cursor.getInt(cursor.getColumnIndex("task_list_id"));
+                String title = cursor.getString(cursor.getColumnIndex("task_list_title"));
+                taskLists.add(new TaskList(id, title));
+            }
+        }
     }
 }
