@@ -1,7 +1,10 @@
 package com.pherodev.killddl.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +14,8 @@ import com.pherodev.killddl.R;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
+
+import dbhelpers.DatabaseHelper;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -30,7 +35,7 @@ public class CategoryActivity extends AppCompatActivity {
 //                this, R.layout.activity_main);
         setContentView(R.layout.activity_category);
 
-//        loadTaskListsFromDB();
+        loadTaskListsFromDB();
 //
 //        taskListsLayoutManager = new LinearLayoutManager(this);
 //        mActivityMainBinding.recyclerView.setLayoutManager(taskListsLayoutManager);
@@ -56,16 +61,19 @@ public class CategoryActivity extends AppCompatActivity {
 
 
     private void loadTaskListsFromDB() {
-//        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
-//
-//        Cursor cursor = database.rawQuery("SELECT * FROM categories", null);
-//
-//        if(cursor.moveToFirst()) {
-//            while(!cursor.isAfterLast()) {
-//                int id = cursor.getInt(cursor.getColumnIndex("task_list_id"));
-//                String title = cursor.getString(cursor.getColumnIndex("task_list_title"));
-//                categories.add(new Category(id, title));
-//            }
-//        }
+        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
+
+        Cursor cursor = database.rawQuery(DatabaseHelper.Category.SELECT_ALL_CATEGORIES, null);
+
+        if(cursor.moveToFirst()) {
+            while(!cursor.isAfterLast()) {
+                int id = cursor.getInt(cursor.getColumnIndex("task_list_id"));
+                String title = cursor.getString(cursor.getColumnIndex("task_list_title"));
+                categories.add(new Category(id, title));
+                System.out.println(id + " " + title);
+
+
+            }
+        }
     }
 }

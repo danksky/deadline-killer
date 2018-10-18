@@ -27,8 +27,8 @@ public class CategoryInputActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
-        titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
+        completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_category_complete);
+        titleEditText = (EditText) findViewById(R.id.edit_text_input_category_title);
 
         if (titleEditText != null)
             titleEditText.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +42,7 @@ public class CategoryInputActivity extends AppCompatActivity {
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, titleEditText.getText(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
 
@@ -55,12 +55,7 @@ public class CategoryInputActivity extends AppCompatActivity {
         SQLiteDatabase database = new DatabaseHelper(this).getWritableDatabase();
 
         ContentValues values = new ContentValues();
-//        values.put();
-
-//        long newRowId = database.insert(
-//                "taskLists"
-//        )
-
+        values.put(DatabaseHelper.Category.CATEGORY_COLUMN_TITLE, titleEditText.getText().toString());
 
     }
 

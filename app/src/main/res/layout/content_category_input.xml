@@ -15,7 +15,7 @@
         app:layout_constraintTop_toBottomOf="@id/divider_input_task">
 
         <EditText
-            android:id="@+id/edit_text_input_task_title"
+            android:id="@+id/edit_text_input_category_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
