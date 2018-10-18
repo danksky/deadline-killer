@@ -1,5 +1,6 @@
 package com.pherodev.killddl.adapters;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,10 +31,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.category_card, viewGroup, false);
         CategoryViewHolder cvh = new CategoryViewHolder(v);
         return cvh;
-
-        // TODO Make each category clickable into tasks and stuff
-
-
     }
 
     @Override
@@ -53,6 +50,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         CategoryViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
+            cv.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    Snackbar.make(v, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }) ;
             categoryTitle = (TextView)itemView.findViewById(R.id.category_title);
         }
     }
