@@ -11,7 +11,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME ="KillDDL_DB";
     private static final int DATABASE_VERSION = 1;
 
-    // This class outlines the Category table schema, and operations
+    /*
+        This class outlines the Category table schema, and operations
+     */
     public static class Category implements BaseColumns {
         // These strings define the Category table
         public static final String CATEGORY_TABLE_NAME = "category";
@@ -20,8 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // These strings are SQL code to create and drop the Category table
         public static final String CREATE_CATEGORY_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 CATEGORY_TABLE_NAME + " (" +
-                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + CATEGORY_COLUMN_TITLE + " TEXT" + ")";
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CATEGORY_COLUMN_TITLE + " TEXT" + ")";
         public static final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " +
                 CATEGORY_TABLE_NAME;
 
@@ -29,6 +31,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String SELECT_ALL_CATEGORIES = "SELECT * FROM " + CATEGORY_TABLE_NAME;
     }
 
+    /*
+        This class outlines the Deadline table schema, and operations
+     */
+    public static class Deadline implements BaseColumns {
+        // These strings define the  Deadline table
+        public static final String DEADLINE_TABLE_NAME = "deadline";
+        public static final String DEADLINE_COLUMN_TITLE = "title";
+        public static final String DEADLINE_COLUMN_DESCRIPTION = "description";
+        public static final String DEADLINE_COLUMN_DUE_DATE = "due_date";
+
+        // These strings are SQL code to create and drop the Deadline table
+        public static final String CREATE_DEADLINE_TABLE = "CREATE TABLE IF NOT EXISTS " +
+                DEADLINE_TABLE_NAME + " (" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                DEADLINE_COLUMN_TITLE + " TEXT, " +
+                DEADLINE_COLUMN_DESCRIPTION + " TEXT, " +
+                DEADLINE_COLUMN_DUE_DATE + "TEXT" + ")";
+        public static final String DROP_DEADLINE_TABLE = "DROP TABLE IF EXISTS " +
+                DEADLINE_TABLE_NAME;
+
+        // These strings are SQL code to select rows from the Deadline table
+        public static final String SELECT_ALL_DEADLINES = "SELECT * FROM " + DEADLINE_TABLE_NAME;
+        public static final String SELECT_ALL_DEADLINES_BY_CATEGORY_ID = "SELECT * FROM " +
+                DEADLINE_TABLE_NAME + "WHERE " + _ID + " = ?";
+
+    }
 
     // Database Creation and Updating
     public DatabaseHelper(Context context) {
@@ -38,11 +66,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(Category.CREATE_CATEGORY_TABLE); // Need to create this first
+        database.execSQL(Deadline.CREATE_DEADLINE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         database.execSQL(Category.DROP_CATEGORY_TABLE);
+        database.execSQL(Deadline.DROP_DEADLINE_TABLE);
         onCreate(database);
     }
 
