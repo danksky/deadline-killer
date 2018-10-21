@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String DEADLINE_COLUMN_TITLE = "title";
         public static final String DEADLINE_COLUMN_DESCRIPTION = "description";
         public static final String DEADLINE_COLUMN_DUE_DATE = "due_date";
+        public static final String DEADLINE_COLUMN_CATEGORY_ID = "category_id";
 
         // These strings are SQL code to create and drop the Deadline table
         public static final String CREATE_DEADLINE_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -47,14 +48,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DEADLINE_COLUMN_TITLE + " TEXT, " +
                 DEADLINE_COLUMN_DESCRIPTION + " TEXT, " +
-                DEADLINE_COLUMN_DUE_DATE + "TEXT" + ")";
+                DEADLINE_COLUMN_DUE_DATE + " TEXT, " +
+                DEADLINE_COLUMN_CATEGORY_ID + " INTEGER, " +
+                // Turning DEADLINE_COLUMN_CATEGORY_ID into foreign key that references
+                // the Category table's column, id."
+                "FOREIGN KEY("+DEADLINE_COLUMN_CATEGORY_ID+") REFERENCES "+Category.CATEGORY_TABLE_NAME+"("+Category._ID+");";
+
         public static final String DROP_DEADLINE_TABLE = "DROP TABLE IF EXISTS " +
                 DEADLINE_TABLE_NAME;
 
         // These strings are SQL code to select rows from the Deadline table
         public static final String SELECT_ALL_DEADLINES = "SELECT * FROM " + DEADLINE_TABLE_NAME;
         public static final String SELECT_ALL_DEADLINES_BY_CATEGORY_ID = "SELECT * FROM " +
-                DEADLINE_TABLE_NAME + "WHERE " + _ID + " = ?";
+                DEADLINE_TABLE_NAME +
+                "WHERE " + DEADLINE_COLUMN_CATEGORY_ID + " = ?";
 
     }
 
