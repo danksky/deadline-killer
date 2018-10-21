@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // Database Strings
+    // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
     private static final int DATABASE_VERSION = 1;
 
