@@ -11,15 +11,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME ="KillDDL_DB";
     private static final int DATABASE_VERSION = 1;
 
-    // Task Table Schema
-
-    // Category Table Schema
+    // This class outlines the Category table schema, and operations
     public static class Category implements BaseColumns {
-        // Table Definition
+        // These strings define the Category table
         public static final String CATEGORY_TABLE_NAME = "category";
         public static final String CATEGORY_COLUMN_TITLE = "title";
 
-        // Table Creation and Deletion
+        // These strings are SQL code to create and drop the Category table
         public static final String CREATE_CATEGORY_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 CATEGORY_TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -27,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " +
                 CATEGORY_TABLE_NAME;
 
-        // Table CRUD Operations
+        // These strings are SQL code to select rows from the Category table
         public static final String SELECT_ALL_CATEGORIES = "SELECT * FROM " + CATEGORY_TABLE_NAME;
     }
 
