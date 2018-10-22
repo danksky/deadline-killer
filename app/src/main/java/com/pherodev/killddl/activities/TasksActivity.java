@@ -1,6 +1,8 @@
 package com.pherodev.killddl.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,10 +15,13 @@ import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.models.Category;
 import com.pherodev.killddl.models.Task;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import dbhelpers.DatabaseHelper;
 
 public class TasksActivity extends AppCompatActivity {
 
@@ -26,7 +31,7 @@ public class TasksActivity extends AppCompatActivity {
 
     private FloatingActionButton createTaskFloatingActionButton;
 
-    private int taskListID;
+    private int categoryId;
     private ArrayList<Task> tasks;
 
     @Override
@@ -40,9 +45,12 @@ public class TasksActivity extends AppCompatActivity {
         Intent extrasIntent = getIntent();
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
-                && extrasIntent.getExtras().containsKey("CATEGORY_ID"))
-            taskListID = extrasIntent.getExtras().getInt("CATEGORY_ID");
-        else Toast.makeText(getApplicationContext(), "did not get taskListID", Toast.LENGTH_LONG);
+                && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
+            categoryId = extrasIntent.getExtras().getInt("CATEGORY_ID");
+            System.out.println("In TasksActivity, have categoryId: " + categoryId);
+            Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " + categoryId, Toast.LENGTH_LONG);
+        }
+        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_LONG);
 
 
         // Setup RecyclerView, LayoutManager, and Adapter
@@ -50,7 +58,7 @@ public class TasksActivity extends AppCompatActivity {
         tasksRecyclerView.setHasFixedSize(true);
         tasksLayoutManager = new LinearLayoutManager(this);
         tasksRecyclerView.setLayoutManager(tasksLayoutManager);
-        initTasks();
+        loadTasksFromDB();
         tasksAdapter = new TasksAdapter(tasks);
         tasksRecyclerView.setAdapter(tasksAdapter);
 
@@ -69,11 +77,25 @@ public class TasksActivity extends AppCompatActivity {
     // TODO: Implement
 
     // TODO: Replace with a call  dbHelper.getTasks(taskListID);
-    public void initTasks() {
+    public void loadTasksFromDB() {
         this.tasks = new ArrayList<>();
-        tasks.add(new Task("0Tickky Bobby", new Date()));
-        tasks.add(new Task("Tickky1 Bobby", new Date()));
-        tasks.add(new Task("Tickky Bo2bby", new Date()));
-        tasks.add(new Task("Tickky Bobb3y", new Date()));
+
+        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
+
+        String[] args = {Integer.toString(categoryId)};
+        Cursor cursor = database.rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
+
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task._ID));
+                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DESCRIPTION));
+                String deadline = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
+            }
+        } finally {
+            cursor.close();
+        }
+
+
     }
 }
