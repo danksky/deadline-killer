@@ -1,9 +1,12 @@
 package dbhelpers;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+
+import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -16,52 +19,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public static class Category implements BaseColumns {
         // These strings define the Category table
-        public static final String CATEGORY_TABLE_NAME = "category";
-        public static final String CATEGORY_COLUMN_TITLE = "title";
+        public static final String TABLE_NAME = "category";
+        public static final String COLUMN_TITLE = "title";
 
         // These strings are SQL code to create and drop the Category table
-        public static final String CREATE_CATEGORY_TABLE = "CREATE TABLE IF NOT EXISTS " +
-                CATEGORY_TABLE_NAME + " (" +
+        public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
+                TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                CATEGORY_COLUMN_TITLE + " TEXT" + ")";
-        public static final String DROP_CATEGORY_TABLE = "DROP TABLE IF EXISTS " +
-                CATEGORY_TABLE_NAME;
+                COLUMN_TITLE + " TEXT" + ");";
+
+        public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
         // These strings are SQL code to select rows from the Category table
-        public static final String SELECT_ALL_CATEGORIES = "SELECT * FROM " + CATEGORY_TABLE_NAME;
-    }
+        public static final String SELECT_ALL = "SELECT * FROM " + TABLE_NAME;
+     }
 
     /*
         This class outlines the Deadline table schema, and operations
      */
-    public static class Deadline implements BaseColumns {
+    public static class Task implements BaseColumns {
         // These strings define the  Deadline table
-        public static final String DEADLINE_TABLE_NAME = "deadline";
-        public static final String DEADLINE_COLUMN_TITLE = "title";
-        public static final String DEADLINE_COLUMN_DESCRIPTION = "description";
-        public static final String DEADLINE_COLUMN_DUE_DATE = "due_date";
-        public static final String DEADLINE_COLUMN_CATEGORY_ID = "category_id";
+        public static final String TABLE_NAME = "task";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_DUE_DATE = "due_date";
+        public static final String COLUMN_CATEGORY_ID = "category_id";
 
         // These strings are SQL code to create and drop the Deadline table
-        public static final String CREATE_DEADLINE_TABLE = "CREATE TABLE IF NOT EXISTS " +
-                DEADLINE_TABLE_NAME + " (" +
+        public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
+                TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                DEADLINE_COLUMN_TITLE + " TEXT, " +
-                DEADLINE_COLUMN_DESCRIPTION + " TEXT, " +
-                DEADLINE_COLUMN_DUE_DATE + " TEXT, " +
-                DEADLINE_COLUMN_CATEGORY_ID + " INTEGER, " +
-                // Turning DEADLINE_COLUMN_CATEGORY_ID into foreign key that references
+                COLUMN_TITLE + " TEXT, " +
+                COLUMN_DESCRIPTION + " TEXT, " +
+                COLUMN_DUE_DATE + " TEXT, " +
+                COLUMN_CATEGORY_ID + " INTEGER, " +
+                // Turning COLUMN_CATEGORY_ID into foreign key that references
                 // the Category table's column, id."
-                "FOREIGN KEY("+DEADLINE_COLUMN_CATEGORY_ID+") REFERENCES "+Category.CATEGORY_TABLE_NAME+"("+Category._ID+");";
+                "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " +
+                Category.TABLE_NAME + "("+Category._ID+") );";
 
-        public static final String DROP_DEADLINE_TABLE = "DROP TABLE IF EXISTS " +
-                DEADLINE_TABLE_NAME;
+        public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
         // These strings are SQL code to select rows from the Deadline table
-        public static final String SELECT_ALL_DEADLINES = "SELECT * FROM " + DEADLINE_TABLE_NAME;
-        public static final String SELECT_ALL_DEADLINES_BY_CATEGORY_ID = "SELECT * FROM " +
-                DEADLINE_TABLE_NAME +
-                "WHERE " + DEADLINE_COLUMN_CATEGORY_ID + " = ?";
+        public static final String SELECT_ALL_TASKS = "SELECT * FROM " + TABLE_NAME;
+        public static final String SELECT_ALL_TASKS_BY_CATEGORY_ID = "SELECT * FROM " +
+                TABLE_NAME +
+                " WHERE " + COLUMN_CATEGORY_ID + " = ?";
+        public static final String SELECT_TASK_BY_ID  = "SELECT * FROM " + TABLE_NAME +
+                " WHERE " + _ID + " = _ID;";
 
     }
 
@@ -72,15 +77,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(Category.CREATE_CATEGORY_TABLE); // Need to create this first
-        database.execSQL(Deadline.CREATE_DEADLINE_TABLE);
+        database.execSQL(Category.CREATE_TABLE); // Need to create this first
+        database.execSQL(Task.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        database.execSQL(Category.DROP_CATEGORY_TABLE);
-        database.execSQL(Deadline.DROP_DEADLINE_TABLE);
+        database.execSQL(Category.DROP_TABLE);
+        database.execSQL(Task.DROP_TABLE);
         onCreate(database);
     }
+
+    public long createCategory(String title){
+        ContentValues values = new ContentValues();
+        values.put(Category.COLUMN_TITLE, title);
+
+        return getWritableDatabase().insert(Category.TABLE_NAME, null, values);
+    }
+
+    public long createTask(Long categoryId, String title, String description , String deadline){
+        ContentValues values = new ContentValues();
+        values.put(Task.COLUMN_TITLE, title);
+        values.put(Task.COLUMN_DESCRIPTION, title);
+        values.put(Task.COLUMN_DUE_DATE, deadline);
+        values.put(Task.COLUMN_CATEGORY_ID, categoryId);
+
+        return getWritableDatabase().insert(Task.TABLE_NAME, null, values);
+
+    }
+
+    public void selectTask(){
+        // TODO
+//        getWritableDatabase().update(Task.TABLE_NAME, Task.SELECT_TASK_BY_ID , )
+    }
+
+    public void updateTask(){
+        // TODO
+    }
+
+    public void selectTaskFromCategory(){
+        // TODO
+    }
+
+
+
+
 
 }

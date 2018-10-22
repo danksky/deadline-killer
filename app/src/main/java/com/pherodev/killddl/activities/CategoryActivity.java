@@ -51,7 +51,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         CategoryAdapter adapter = new CategoryAdapter(categories);
         rv.setAdapter(adapter);
-//
+
 //        taskListsLayoutManager = new LinearLayoutManager(this);
 //        mActivityMainBinding.recyclerView.setLayoutManager(taskListsLayoutManager);
         FloatingActionButton fab = findViewById(R.id.fab);

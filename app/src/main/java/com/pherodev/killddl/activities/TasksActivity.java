@@ -35,7 +35,7 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState.containsKey("savedInstanceState"))
+        if (savedInstanceState != null && savedInstanceState.containsKey("savedInstanceState"))
             taskListID = savedInstanceState.getInt("CATEGORY_ID");
 
 

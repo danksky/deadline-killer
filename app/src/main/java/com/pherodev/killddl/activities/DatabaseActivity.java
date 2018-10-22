@@ -22,8 +22,7 @@ public class DatabaseActivity extends AppCompatActivity {
         sqliteQueryTextView = (TextView) findViewById(R.id.text_view_sqlite_query);
         sqliteResultSetTextView = (TextView) findViewById(R.id.text_view_sqlite_result_set);
 
-        sqliteQueryTextView.setText(DatabaseHelper.Category.CREATE_CATEGORY_TABLE + "\n\n" +
-        DatabaseHelper.Category.SELECT_ALL_CATEGORIES);
+        sqliteQueryTextView.setText(DatabaseHelper.Category.CREATE_CATEGORY_TABLE + "\n\n" + DatabaseHelper.Category.SELECT_ALL_CATEGORIES);
 
         // however you decide to format the results that are returned from dbHelper's methods you write
         sqliteResultSetTextView.setText("here go results");

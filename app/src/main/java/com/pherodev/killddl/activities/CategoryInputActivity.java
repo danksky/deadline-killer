@@ -1,6 +1,7 @@
 package com.pherodev.killddl.activities;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,9 +20,11 @@ public class CategoryInputActivity extends AppCompatActivity {
 
     private FloatingActionButton completeInputFloatingActionButton;
     private EditText titleEditText;
+    private DatabaseHelper database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setTitle("Add a new Category");
         setContentView(R.layout.activity_category_input);
@@ -30,8 +33,9 @@ public class CategoryInputActivity extends AppCompatActivity {
 
         completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_category_complete);
         titleEditText = (EditText) findViewById(R.id.edit_text_input_category_title);
+        database = new DatabaseHelper(this);
 
-        if (titleEditText != null)
+        if (titleEditText != null) {
             titleEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -39,27 +43,21 @@ public class CategoryInputActivity extends AppCompatActivity {
                             .setAction("Action", null).show();
                 }
             });
+        }
 
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveCategoryToDB();
+                long newRowId = database.createCategory(titleEditText.getText().toString() );
+                Toast.makeText(view.getContext(), "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
                 Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-
+                Intent intent = new Intent(getApplicationContext(), CategoryInputActivity.class);
+                startActivity(intent);
 
             }
         });
-    }
-
-    public void saveCategoryToDB() {
-        SQLiteDatabase database = new DatabaseHelper(this).getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.Category.CATEGORY_COLUMN_TITLE, titleEditText.getText().toString());
-        long newRowId = database.insert(DatabaseHelper.Category.CATEGORY_TABLE_NAME, null, values);
-        Toast.makeText(this, "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
     }
 
 }
