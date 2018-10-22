@@ -79,12 +79,12 @@ public class CategoryActivity extends AppCompatActivity {
         System.out.println("HEY THERE");
         SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
 
-        Cursor cursor = database.rawQuery(DatabaseHelper.Category.SELECT_ALL_CATEGORIES, null);
+        Cursor cursor = database.rawQuery(DatabaseHelper.Category.SELECT_ALL, null);
 
         try {
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Category._ID));
-                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Category.CATEGORY_COLUMN_TITLE));
+                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Category.COLUMN_TITLE));
                 categories.add(new Category(id,title));
                 System.out.println(id + " " + title);
             }

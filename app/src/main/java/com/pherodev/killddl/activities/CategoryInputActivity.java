@@ -55,9 +55,6 @@ public class CategoryInputActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
                 startActivity(intent);
 
-                Intent intent = new Intent(getApplicationContext(), CategoryInputActivity.class);
-                startActivity(intent);
-
             }
         });
     }
