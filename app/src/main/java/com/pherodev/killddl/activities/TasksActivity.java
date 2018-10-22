@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.TasksAdapter;
@@ -35,8 +36,13 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey("savedInstanceState"))
-            taskListID = savedInstanceState.getInt("CATEGORY_ID");
+
+        Intent extrasIntent = getIntent();
+        if (extrasIntent != null
+                && extrasIntent.getExtras() != null
+                && extrasIntent.getExtras().containsKey("CATEGORY_ID"))
+            taskListID = extrasIntent.getExtras().getInt("CATEGORY_ID");
+        else Toast.makeText(getApplicationContext(), "did not get taskListID", Toast.LENGTH_LONG);
 
 
         // Setup RecyclerView, LayoutManager, and Adapter

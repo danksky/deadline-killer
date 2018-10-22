@@ -52,6 +52,8 @@ public class CategoryInputActivity extends AppCompatActivity {
                 Toast.makeText(view.getContext(), "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
                 Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
+                startActivity(intent);
 
                 Intent intent = new Intent(getApplicationContext(), CategoryInputActivity.class);
                 startActivity(intent);
