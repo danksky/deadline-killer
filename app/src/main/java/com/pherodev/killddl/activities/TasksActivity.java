@@ -25,6 +25,7 @@ public class TasksActivity extends AppCompatActivity {
 
     private FloatingActionButton createTaskFloatingActionButton;
 
+    private int taskListID;
     private ArrayList<Task> tasks;
 
     @Override
@@ -34,7 +35,9 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // TODO: Get the TaskListID from savedInstanceState
+        if (savedInstanceState.containsKey("savedInstanceState"))
+            taskListID = savedInstanceState.getInt("CATEGORY_ID");
+
 
         // Setup RecyclerView, LayoutManager, and Adapter
         tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
@@ -59,7 +62,7 @@ public class TasksActivity extends AppCompatActivity {
 
     // TODO: Implement
 
-    // TODO: Replace with a call  dbHelper.getTasks(taskListId);
+    // TODO: Replace with a call  dbHelper.getTasks(taskListID);
     public void initTasks() {
         this.tasks = new ArrayList<>();
         tasks.add(new Task("0Tickky Bobby", new Date()));
