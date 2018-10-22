@@ -38,7 +38,16 @@
         <activity
             android:name=".activities.CategoryInputActivity"
             android:label="@string/title_activity_task_list_input"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.DatabaseActivity"
+            android:label="@string/title_activity_database"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="com.pherodev.killddl.DatabaseActivity" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
