@@ -1,6 +1,8 @@
 package com.pherodev.killddl.activities;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,12 +14,15 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.models.Task;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import dbhelpers.DatabaseHelper;
 
 public class TaskInputActivity extends AppCompatActivity {
 
@@ -26,6 +31,10 @@ public class TaskInputActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TextView deadlineTextView;
+    private int categoryId;
+    private DatabaseHelper database;
+
+    private Date deadline;
 
 
     @Override
@@ -34,6 +43,16 @@ public class TaskInputActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_input);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent extrasIntent = getIntent();
+        if (extrasIntent != null
+                && extrasIntent.getExtras() != null
+                && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
+            categoryId = extrasIntent.getExtras().getInt("CATEGORY_ID");
+            System.out.println("In TasksActivity, have categoryId: " + categoryId);
+            Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
+                    categoryId, Toast.LENGTH_LONG);
+        }
+        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_LONG);
 
         // Initialize
         completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
@@ -51,7 +70,8 @@ public class TaskInputActivity extends AppCompatActivity {
                     int month = cal.get(Calendar.MONTH);
                     int day = cal.get(Calendar.DAY_OF_MONTH);
 
-                    DatePickerDialog dialog = new DatePickerDialog(TaskInputActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth,  mDateSetListener,
+                    DatePickerDialog dialog = new DatePickerDialog(TaskInputActivity.this,
+                            android.R.style.Theme_Holo_Light_Dialog_MinWidth,  mDateSetListener,
                             year,month,day);
 
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -63,6 +83,10 @@ public class TaskInputActivity extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1; // January is 0
                 String date = month + "/" + day + "/" + year;
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(year, month, day);
+                deadline = cal.getTime();
                 deadlineTextView.setText(date);
             }
         };
@@ -71,14 +95,22 @@ public class TaskInputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (verify().equals("OKAY")) {
-                    // Add new task to the database, and open the tasks intent again 
+                    // Add new task to the database, and open the tasks intent again
+                    String title = titleEditText.getText().toString();
+                    String description = descriptionEditText.getText().toString();
+                    String deadlineText = deadline.toString();
 
+                    database = new DatabaseHelper(TaskInputActivity.this);
 
-                    // Task t = new Task(...);
-                    // dbHelper.addTask(t);
-                    Snackbar snackbar = Snackbar
-                            .make(findViewById(R.id.coordinator_layout_activity_task_input), "Task compleet.", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                    long newRowId = database.createTask(categoryId, title, description, deadlineText);
+
+                    Toast.makeText(view.getContext(), "The new row ID is: " + newRowId,
+                            Toast.LENGTH_LONG).show();
+
+                    // Restart the updated Tasks intent
+                    Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
+                    intent.putExtra("CATEGORY_ID", categoryId);
+                    startActivity(intent);
                 }
             }
         });
@@ -102,10 +134,6 @@ public class TaskInputActivity extends AppCompatActivity {
             titleEditText.setError("TITLE TOO LONG");
             return "NOT OKAY, K?";
         }
-
-
         return "OKAY";
     }
-
-
 }

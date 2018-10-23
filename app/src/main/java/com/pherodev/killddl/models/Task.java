@@ -5,11 +5,16 @@ import java.util.Date;
 public class Task {
 
     private int id;
+    private int categoryId;
     private String title;
+    private String description;
     private Date deadline;
 
-    public Task (String title, Date deadline) {
+    public Task (int id, int categoryId, String title, String description, Date deadline) {
+        this.id = id;
+        this.categoryId = categoryId;
         this.title = title;
+        this.description = description;
         this.deadline = deadline;
     }
 
@@ -21,6 +26,10 @@ public class Task {
         this.id = id;
     }
 
+    public int getCategoryId() { return categoryId; }
+
+    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+
     public String getTitle() {
         return title;
     }
@@ -28,6 +37,11 @@ public class Task {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
 
     public Date getDeadline() {
         return deadline;

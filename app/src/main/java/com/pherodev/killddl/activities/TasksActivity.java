@@ -18,8 +18,12 @@ import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.models.Category;
 import com.pherodev.killddl.models.Task;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import dbhelpers.DatabaseHelper;
 
@@ -65,9 +69,10 @@ public class TasksActivity extends AppCompatActivity {
         createTaskFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_create_task);
         createTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent startTaskInputActivityIntent = new Intent(getApplicationContext(), TaskInputActivity.class);
-                startActivity(startTaskInputActivityIntent);
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TaskInputActivity.class);
+                intent.putExtra("CATEGORY_ID", categoryId);
+                v.getContext().startActivity(intent);
             }
         });
     }
@@ -90,8 +95,16 @@ public class TasksActivity extends AppCompatActivity {
                 int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task._ID));
                 String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_TITLE));
                 String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DESCRIPTION));
-                String deadline = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
+                String deadlineString = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
+                DateFormat format = new SimpleDateFormat(deadlineString, Locale.ENGLISH);
+                Date deadline = format.parse(deadlineString);
+                System.out.println("date: " + deadline);
+
+                tasks.add(new Task(id, categoryId, title, description, deadline));
+                System.out.println("TASK " + id + " " + title + " " + description + " " + deadline);
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         } finally {
             cursor.close();
         }

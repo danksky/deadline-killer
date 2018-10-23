@@ -95,10 +95,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().insert(Category.TABLE_NAME, null, values);
     }
 
-    public long createTask(Long categoryId, String title, String description , String deadline){
+    public long createTask(int categoryId, String title, String description , String deadline){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
-        values.put(Task.COLUMN_DESCRIPTION, title);
+        values.put(Task.COLUMN_DESCRIPTION, description);
         values.put(Task.COLUMN_DUE_DATE, deadline);
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
 
