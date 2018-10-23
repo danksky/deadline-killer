@@ -35,8 +35,10 @@ public class TasksActivity extends AppCompatActivity {
 
     private FloatingActionButton createTaskFloatingActionButton;
 
-    private int categoryId;
+    private long categoryId;
     private ArrayList<Task> tasks;
+
+    private DatabaseHelper database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class TasksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tasks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        database = new DatabaseHelper(this);
 
 
         Intent extrasIntent = getIntent();
@@ -81,14 +84,10 @@ public class TasksActivity extends AppCompatActivity {
 
     // TODO: Implement
 
-    // TODO: Replace with a call  dbHelper.getTasks(taskListID);
     public void loadTasksFromDB() {
         this.tasks = new ArrayList<>();
 
-        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
-
-        String[] args = {Integer.toString(categoryId)};
-        Cursor cursor = database.rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
+        Cursor cursor = database.selectTaskFromCategory(Long.toString(categoryId));
 
         try {
             while (cursor.moveToNext()) {

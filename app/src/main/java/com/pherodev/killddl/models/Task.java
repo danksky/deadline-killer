@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class Task {
 
-    private int id;
-    private int categoryId;
+    private long id;
+    private long categoryId;
     private String title;
     private String description;
     private Date deadline;
 
-    public Task (int id, int categoryId, String title, String description, Date deadline) {
+    public Task (long id, long categoryId, String title, String description, Date deadline) {
         this.id = id;
         this.categoryId = categoryId;
         this.title = title;
@@ -18,7 +18,7 @@ public class Task {
         this.deadline = deadline;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -26,9 +26,9 @@ public class Task {
         this.id = id;
     }
 
-    public int getCategoryId() { return categoryId; }
+    public long getCategoryId() { return categoryId; }
 
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+    public void setCategoryId(long categoryId) { this.categoryId = categoryId; }
 
     public String getTitle() {
         return title;

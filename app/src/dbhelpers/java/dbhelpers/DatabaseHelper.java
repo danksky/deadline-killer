@@ -2,6 +2,7 @@ package dbhelpers;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
@@ -114,19 +115,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Task.COLUMN_DESCRIPTION, title);
         values.put(Task.COLUMN_DUE_DATE, deadline);
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
-        String[] args = new String[]{Long.toString(taskId)};
+        String[] args = {Long.toString(taskId)};
 
         getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args );
 
     }
 
 
-    public void selectTask(){
-        // TODO
+    public void deleteTask(Long taskId){
+
+        String[] args = {Long.toString(taskId)};
+        getWritableDatabase().delete(Task.TABLE_NAME,Task.WHERE_ID, args);
+        return;
     }
 
-    public void selectTaskFromCategory(){
-        // TODO
+    public Cursor selectTaskFromCategory(String categoryId){
+
+        String[] args = {categoryId};
+        return getWritableDatabase().rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
     }
 
 
