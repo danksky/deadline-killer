@@ -87,6 +87,7 @@ public class TaskInputActivity extends AppCompatActivity {
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day);
                 deadline = cal.getTime();
+                System.out.println("INPUT DEADLINE " + deadline);
                 deadlineTextView.setText(date);
             }
         };
@@ -104,8 +105,7 @@ public class TaskInputActivity extends AppCompatActivity {
 
                     long newRowId = database.createTask(categoryId, title, description, deadlineText);
 
-                    Toast.makeText(view.getContext(), "The new row ID is: " + newRowId,
-                            Toast.LENGTH_LONG).show();
+                    System.out.println("Creating " + categoryId + title + description + deadlineText);
 
                     // Restart the updated Tasks intent
                     Intent intent = new Intent(getApplicationContext(), TasksActivity.class);

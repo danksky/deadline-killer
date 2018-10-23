@@ -96,7 +96,7 @@ public class TasksActivity extends AppCompatActivity {
                 String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_TITLE));
                 String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DESCRIPTION));
                 String deadlineString = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
-                DateFormat format = new SimpleDateFormat(deadlineString, Locale.ENGLISH);
+                DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
                 Date deadline = format.parse(deadlineString);
                 System.out.println("date: " + deadline);
 
