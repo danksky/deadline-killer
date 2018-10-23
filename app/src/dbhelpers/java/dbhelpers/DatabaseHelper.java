@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     /*
         This class outlines the Category table schema, and operations

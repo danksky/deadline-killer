@@ -37,6 +37,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         // - replace the contents of the view with that element
         holder.taskTitle.setText(tasks.get(position).getTitle());
         holder.taskDeadline.setText(tasks.get(position).getDeadline().toString());
+        holder.taskDescription.setText(tasks.get(position).getDescription());
     }
 
     // Return the size of the dataset (invoked by the layout manager)
@@ -55,12 +56,14 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         CardView taskCardView;
         TextView taskTitle;
         TextView taskDeadline;
+        TextView taskDescription;
 
         public TasksViewHolder(View itemView) {
             super(itemView);
             taskCardView = (CardView) itemView.findViewById(R.id.card_view_task);
             taskTitle = (TextView) itemView.findViewById(R.id.text_view_task_title);
             taskDeadline = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
+            taskDescription = (TextView) itemView.findViewById(R.id.text_view_task_description);
         }
     }
 }
