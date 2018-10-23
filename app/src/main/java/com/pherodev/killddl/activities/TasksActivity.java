@@ -46,7 +46,11 @@ public class TasksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tasks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         database = new DatabaseHelper(this);
+
+        setTitle("Tasks");
+
 
 
         Intent extrasIntent = getIntent();
@@ -87,20 +91,23 @@ public class TasksActivity extends AppCompatActivity {
     public void loadTasksFromDB() {
         this.tasks = new ArrayList<>();
 
+        // Get all tasks by category Id
         Cursor cursor = database.selectTaskFromCategory(Long.toString(categoryId));
+
+
 
         try {
             while (cursor.moveToNext()) {
+                // Variables to initialize each task object in the result set
                 int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task._ID));
                 String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_TITLE));
                 String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DESCRIPTION));
                 String deadlineString = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
                 DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
                 Date deadline = format.parse(deadlineString);
-                System.out.println("date: " + deadline);
 
+                // Initialize new task and add to tasks ArrayList
                 tasks.add(new Task(id, categoryId, title, description, deadline));
-                System.out.println("TASK " + id + " " + title + " " + description + " " + deadline);
             }
         } catch (ParseException e) {
             e.printStackTrace();
