@@ -23,11 +23,6 @@ import dbhelpers.DatabaseHelper;
 
 public class CategoryActivity extends AppCompatActivity {
 
-//    private RecyclerView taskListsRecyclerView;
-//    private RecyclerView.Adapter taskListsAdapter;
-//    private RecyclerView.LayoutManager taskListsLayoutManager;
-//    private ActivityMainBinding mActivityMainBinding;
-
     private RecyclerView rv;
     private LinearLayoutManager llm;
     private ArrayList<Category> categories;
@@ -37,9 +32,8 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Deadline Categories");
-//        mActivityMainBinding = DataBindingUtil.setContentView(
-//                this, R.layout.activity_main);
         setContentView(R.layout.activity_category);
+
         categories = new ArrayList<Category>();
         loadCategoriesFromDB();
 
@@ -52,8 +46,6 @@ public class CategoryActivity extends AppCompatActivity {
         CategoryAdapter adapter = new CategoryAdapter(categories);
         rv.setAdapter(adapter);
 
-//        taskListsLayoutManager = new LinearLayoutManager(this);
-//        mActivityMainBinding.recyclerView.setLayoutManager(taskListsLayoutManager);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,18 +54,7 @@ public class CategoryActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        mActivityMainBinding.fabCreateTaskList.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("I GOT CLICKED");
-//                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
-
 
     private void loadCategoriesFromDB() {
         System.out.println("HEY THERE");

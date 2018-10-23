@@ -8,21 +8,25 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view_task"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        card_view:cardCornerRadius="4dp">
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardUseCompatPadding="true">
         <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical">
             <TextView
+                style="@android:style/TextAppearance.Large"
                 android:id="@+id/text_view_task_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
+                style="@android:style/TextAppearance.Medium"
                 android:id="@+id/text_view_task_deadline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
+                style="@android:style/TextAppearance.Small"
                 android:id="@+id/text_view_task_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
