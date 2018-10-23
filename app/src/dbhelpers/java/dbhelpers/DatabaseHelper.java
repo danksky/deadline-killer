@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 
+import java.sql.PreparedStatement;
 import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -65,8 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String SELECT_ALL_TASKS_BY_CATEGORY_ID = "SELECT * FROM " +
                 TABLE_NAME +
                 " WHERE " + COLUMN_CATEGORY_ID + " = ?";
-        public static final String SELECT_TASK_BY_ID  = "SELECT * FROM " + TABLE_NAME +
-                " WHERE " + _ID + " = _ID;";
+        public static final String WHERE_ID  = " WHERE " + _ID + " = ?;";
 
     }
 
@@ -106,12 +107,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void selectTask(){
-        // TODO
-//        getWritableDatabase().update(Task.TABLE_NAME, Task.SELECT_TASK_BY_ID , )
+    public void updateTask(long taskId, String categoryId, String title, String description , String deadline ){
+
+        ContentValues values = new ContentValues();
+        values.put(Task.COLUMN_TITLE, title);
+        values.put(Task.COLUMN_DESCRIPTION, title);
+        values.put(Task.COLUMN_DUE_DATE, deadline);
+        values.put(Task.COLUMN_CATEGORY_ID, categoryId);
+        String[] args = new String[]{Long.toString(taskId)};
+
+        getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args );
+
     }
 
-    public void updateTask(){
+
+    public void selectTask(){
         // TODO
     }
 
