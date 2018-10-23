@@ -39,7 +39,6 @@ public class TasksActivity extends AppCompatActivity {
     private String categoryTitle;
     private ArrayList<Task> tasks;
 
-    private DatabaseHelper database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +47,12 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        database = new DatabaseHelper(this);
-
 
         Intent extrasIntent = getIntent();
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
-            categoryId = extrasIntent.getExtras().getInt("CATEGORY_ID");
+            categoryId = extrasIntent.getExtras().getLong("CATEGORY_ID");
             System.out.println("In TasksActivity, have categoryId: " + categoryId);
             Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " + categoryId, Toast.LENGTH_LONG);
         }
@@ -91,7 +88,7 @@ public class TasksActivity extends AppCompatActivity {
 
     public void loadTasksFromDB() {
         this.tasks = new ArrayList<>();
-
+        DatabaseHelper database = new DatabaseHelper(this);
         // Get all tasks by category Id
         Cursor cursor = database.selectTaskFromCategory(Long.toString(categoryId));
 
@@ -109,11 +106,14 @@ public class TasksActivity extends AppCompatActivity {
 
                 // Initialize new task and add to tasks ArrayList
                 tasks.add(new Task(id, categoryId, title, description, deadline));
+                System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
+                        " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         } finally {
             cursor.close();
+            database.close();
         }
 
 

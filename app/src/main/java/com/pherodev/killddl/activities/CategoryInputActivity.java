@@ -20,7 +20,6 @@ public class CategoryInputActivity extends AppCompatActivity {
 
     private FloatingActionButton completeInputFloatingActionButton;
     private EditText titleEditText;
-    private DatabaseHelper database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,6 @@ public class CategoryInputActivity extends AppCompatActivity {
 
         completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_category_complete);
         titleEditText = (EditText) findViewById(R.id.edit_text_input_category_title);
-        database = new DatabaseHelper(this);
 
         if (titleEditText != null) {
             titleEditText.setOnClickListener(new View.OnClickListener() {
@@ -48,13 +46,14 @@ public class CategoryInputActivity extends AppCompatActivity {
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                DatabaseHelper database = new DatabaseHelper(CategoryInputActivity.this);
                 long newRowId = database.createCategory(titleEditText.getText().toString() );
                 Toast.makeText(view.getContext(), "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
                 Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
                 startActivity(intent);
-
+                database.close();
             }
         });
     }

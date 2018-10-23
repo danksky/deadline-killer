@@ -39,7 +39,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @Override
     public void onBindViewHolder(CategoryViewHolder categoryViewHolder, int i) {
         categoryViewHolder.categoryTitle.setText(categories.get(i).getTitle());
-        categoryViewHolder.categoryId = categories.get(i).getId();
+        categoryViewHolder.categoryId = Long.valueOf(categories.get(i).getId());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView categoryTitle;
-        int categoryId;
+        long categoryId;
 
         CategoryViewHolder(View itemView) {
             super(itemView);

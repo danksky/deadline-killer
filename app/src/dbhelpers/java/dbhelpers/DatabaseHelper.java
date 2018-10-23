@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long createTask(int categoryId, String title, String description , String deadline){
+    public long createTask(long categoryId, String title, String description , String deadline){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
         values.put(Task.COLUMN_DESCRIPTION, description);

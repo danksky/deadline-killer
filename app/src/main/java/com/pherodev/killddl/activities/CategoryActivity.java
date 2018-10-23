@@ -71,6 +71,7 @@ public class CategoryActivity extends AppCompatActivity {
             }
         } finally {
             cursor.close();
+            database.close();
         }
     }
 }

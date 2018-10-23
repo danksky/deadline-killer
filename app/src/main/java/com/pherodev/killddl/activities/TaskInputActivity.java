@@ -31,8 +31,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TextView deadlineTextView;
-    private int categoryId;
-    private DatabaseHelper database;
+    private long categoryId;
 
     private Date deadline;
 
@@ -48,8 +47,8 @@ public class TaskInputActivity extends AppCompatActivity {
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
-            categoryId = extrasIntent.getExtras().getInt("CATEGORY_ID");
-            System.out.println("In TasksActivity, have categoryId: " + categoryId);
+            categoryId = new Long(extrasIntent.getExtras().getLong("CATEGORY_ID"));
+            System.out.println("In TaskInputActivity, have categoryId: " + categoryId);
             Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
                     categoryId, Toast.LENGTH_LONG);
         }
@@ -102,9 +101,10 @@ public class TaskInputActivity extends AppCompatActivity {
                     String description = descriptionEditText.getText().toString();
                     String deadlineText = deadline.toString();
 
-                    database = new DatabaseHelper(TaskInputActivity.this);
+                    DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
 
                     long newRowId = database.createTask(categoryId, title, description, deadlineText);
+                    database.close();
 
                     System.out.println("Creating " + categoryId + title + description + deadlineText);
 
