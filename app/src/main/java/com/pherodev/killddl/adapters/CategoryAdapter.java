@@ -59,8 +59,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 @Override public void onClick(View v) {
                     // Based on which item was clicked, we want to open the Tasks activity with that ID
                     // Maybe we do this in OnCreateViewHolder?
-                    Snackbar.make(v, "Clicked on category with iD: " + categoryId, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
                     Intent intent = new Intent (v.getContext(), TasksActivity.class);
                     intent.putExtra("CATEGORY_ID", categoryId);
                     v.getContext().startActivity(intent);
