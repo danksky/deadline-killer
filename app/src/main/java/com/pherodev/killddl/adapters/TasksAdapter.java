@@ -1,5 +1,7 @@
 package com.pherodev.killddl.adapters;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pherodev.killddl.R;
+import com.pherodev.killddl.activities.TaskInputActivity;
 import com.pherodev.killddl.models.Task;
 
 import java.util.ArrayList;
+
+import dbhelpers.DatabaseHelper;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
 
@@ -51,19 +56,48 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class TasksViewHolder extends RecyclerView.ViewHolder {
+    public class TasksViewHolder extends RecyclerView.ViewHolder {
 
         CardView taskCardView;
         TextView taskTitle;
         TextView taskDeadline;
         TextView taskDescription;
 
-        public TasksViewHolder(View itemView) {
+        public TasksViewHolder(final View itemView) {
             super(itemView);
             taskCardView = (CardView) itemView.findViewById(R.id.card_view_task);
             taskTitle = (TextView) itemView.findViewById(R.id.text_view_task_title);
             taskDeadline = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
             taskDescription = (TextView) itemView.findViewById(R.id.text_view_task_description);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int position = getLayoutPosition();
+                    DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
+                    dbHelper.deleteTask(tasks.get(position).getId());
+                    dbHelper.close();
+                    tasks.remove(position);
+                    notifyItemRemoved(position);
+                    return true;
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent editIntent = new Intent(view.getContext(), TaskInputActivity.class);
+                    int position = getLayoutPosition();
+                    Task t = tasks.get(position);
+                    editIntent.putExtra("EDIT_TASK_MODE", true);
+                    editIntent.putExtra("EDIT_TASK_ID", t.getId());
+                    editIntent.putExtra("EDIT_TASK_CATEGORY_ID", t.getCategoryId());
+                    editIntent.putExtra("EDIT_TASK_DEADLINE", t.getDeadline().getTime());
+                    editIntent.putExtra("EDIT_TASK_TITLE", t.getTitle());
+                    editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
+                    view.getContext().startActivity(editIntent);
+                }
+            });
         }
     }
 }

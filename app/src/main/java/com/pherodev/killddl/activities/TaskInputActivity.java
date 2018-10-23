@@ -1,6 +1,7 @@
 package com.pherodev.killddl.activities;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -29,9 +30,11 @@ public class TaskInputActivity extends AppCompatActivity {
     private FloatingActionButton completeInputFloatingActionButton;
     private EditText titleEditText;
     private EditText descriptionEditText;
-    private DatePickerDialog.OnDateSetListener mDateSetListener;
+    private DatePickerDialog.OnDateSetListener taskInputDateSetListener;
     private TextView deadlineTextView;
     private long categoryId;
+
+    private boolean editMode = false;
 
     private Date deadline;
 
@@ -43,22 +46,40 @@ public class TaskInputActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_input);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent extrasIntent = getIntent();
+        final Intent extrasIntent = getIntent();
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
             categoryId = new Long(extrasIntent.getExtras().getLong("CATEGORY_ID"));
             System.out.println("In TaskInputActivity, have categoryId: " + categoryId);
             Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
-                    categoryId, Toast.LENGTH_LONG);
+                    categoryId, Toast.LENGTH_LONG).show();
         }
-        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_LONG);
+        else if (extrasIntent != null
+                && extrasIntent.getExtras() != null
+                && extrasIntent.getExtras().containsKey("EDIT_TASK_MODE")) {
+            editMode = extrasIntent.getExtras().getBoolean("EDIT_TASK_MODE");
+            Toast.makeText(getApplicationContext(), "Edit mode enabled.", Toast.LENGTH_LONG).show();
+        }
+        else
+            Toast.makeText(getApplicationContext(), "No bundle.", Toast.LENGTH_LONG).show();
 
         // Initialize
         completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
         deadlineTextView = (TextView) findViewById(R.id.text_view_input_task_deadline);
         titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
         descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
+
+        if (editMode) {
+            // Populate accordingly
+            categoryId = extrasIntent.getExtras().getLong("EDIT_TASK_CATEGORY_ID");
+            Date date = new Date();
+            date.setTime(extrasIntent.getExtras().getLong("EDIT_TASK_DEADLINE"));
+            deadline = date;
+            deadlineTextView.setText(date.toString());
+            titleEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_TITLE"));
+            descriptionEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_DESCRIPTION"));
+        }
 
         if (deadlineTextView != null)
             deadlineTextView.setOnClickListener(new View.OnClickListener() {
@@ -71,14 +92,20 @@ public class TaskInputActivity extends AppCompatActivity {
                     int day = cal.get(Calendar.DAY_OF_MONTH);
 
                     DatePickerDialog dialog = new DatePickerDialog(TaskInputActivity.this,
-                            android.R.style.Theme_Holo_Light_Dialog_MinWidth,  mDateSetListener,
+                            android.R.style.Theme_Holo_Light_Dialog_MinWidth,  taskInputDateSetListener,
                             year,month,day);
 
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(android.R.color.transparent));
+                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            deadlineTextView.setError("MUST ENTER DATE");
+                        }
+                    });
                     dialog.show();
                 }
             });
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        taskInputDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1; // January is 0
@@ -88,6 +115,8 @@ public class TaskInputActivity extends AppCompatActivity {
                 cal.set(year, month, day);
                 deadline = cal.getTime();
                 System.out.println("INPUT DEADLINE " + deadline);
+                if (deadlineTextView.getError() != null)
+                    deadlineTextView.setError(null);
                 deadlineTextView.setText(date);
             }
         };
@@ -103,25 +132,26 @@ public class TaskInputActivity extends AppCompatActivity {
 
                     DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
 
-                    long newRowId = database.createTask(categoryId, title, description, deadlineText);
+                    if (editMode) {
+                        long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
+                        database.updateTask(taskId, categoryId, title, description, deadlineText);
+                    } else
+                        database.createTask(categoryId, title, description, deadlineText);
                     database.close();
 
-                    System.out.println("Creating " + categoryId + title + description + deadlineText);
-
                     // Restart the updated Tasks intent
-                    Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
-                    intent.putExtra("CATEGORY_ID", categoryId);
-                    startActivity(intent);
+                    if (editMode)
+                        setResult(TasksActivity.TASK_EDIT_REQUEST);
+                    else
+                        setResult(TasksActivity.TASK_CREATE_REQUEST);
+                    finish();
                 }
             }
         });
     }
 
     public String verify() {
-        // TODO: Actually implement date selection / population
-        Date deadline = new Date();
         String title = titleEditText.getText().toString();
-        String description = descriptionEditText.getText().toString();
 
         if (deadline == null) {
             deadlineTextView.setError("BAD DATE");

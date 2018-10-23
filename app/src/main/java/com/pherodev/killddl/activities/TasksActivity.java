@@ -1,5 +1,6 @@
 package com.pherodev.killddl.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,6 +40,8 @@ public class TasksActivity extends AppCompatActivity {
     private String categoryTitle;
     private ArrayList<Task> tasks;
 
+    public static final int TASK_CREATE_REQUEST = 1;
+    public static final int TASK_EDIT_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,22 +80,42 @@ public class TasksActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TaskInputActivity.class);
                 intent.putExtra("CATEGORY_ID", categoryId);
-                v.getContext().startActivity(intent);
+                startActivityForResult(intent, TASK_CREATE_REQUEST);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(), "onActivityResult running", Toast.LENGTH_LONG).show();
+            return;
+        }
+        switch (requestCode) {
+            case TASK_CREATE_REQUEST:
+                // TODO: Improve this UI update
+                loadTasksFromDB();
+                tasksRecyclerView.getAdapter().notifyDataSetChanged();
+                Toast.makeText(getApplicationContext(), "TASK_CREATE_REQUEST", Toast.LENGTH_LONG).show();
+                return;
+            case TASK_EDIT_REQUEST:
+                // Can't run startActivityForResult from TaskAdapter
+                return;
+        }
+    }
+
     // TODO: Implement single item on-long-click listener
 
-    // TODO: Implement
-
+    // TODO: Move this Cursor magic to DatabaseHelper
     public void loadTasksFromDB() {
         this.tasks = new ArrayList<>();
         DatabaseHelper database = new DatabaseHelper(this);
         // Get all tasks by category Id
-        Cursor cursor = database.selectTaskFromCategory(Long.toString(categoryId));
+        Cursor cursor = database.selectTaskFromCategory(categoryId);
 
         categoryTitle = database.getCategoryTitleById(Long.toString(categoryId));
+        tasks.clear();
 
         try {
             while (cursor.moveToNext()) {

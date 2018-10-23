@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String SELECT_CATEGORY_NAME_BY_ID = "SELECT " + COLUMN_TITLE +
                 " FROM " + TABLE_NAME +
                 " WHERE " + _ID + " = ?";
+        public static final String WHERE_ID = _ID + " = ?;";
      }
 
     /*
@@ -73,8 +74,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String SELECT_ALL_TASKS_BY_CATEGORY_ID = "SELECT * FROM " +
                 TABLE_NAME +
                 " WHERE " + COLUMN_CATEGORY_ID + " = ?";
-        public static final String WHERE_ID  = " WHERE " + _ID + " = ?;";
-
+        public static final String WHERE_ID = _ID + " = ?;";
+        public static final String WHERE_CATEGORY_ID = COLUMN_CATEGORY_ID + " = ?;";
     }
 
     // Database Creation and Updating
@@ -114,16 +115,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void updateTask(long taskId, String categoryId, String title, String description , String deadline ){
+    public void updateTask(long taskId, long categoryId, String title, String description , String deadline ){
 
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
-        values.put(Task.COLUMN_DESCRIPTION, title);
+        values.put(Task.COLUMN_DESCRIPTION, description);
         values.put(Task.COLUMN_DUE_DATE, deadline);
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
         String[] args = {Long.toString(taskId)};
 
-        getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args );
+        getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args);
 
     }
 
@@ -131,13 +132,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteTask(Long taskId){
 
         String[] args = {Long.toString(taskId)};
-        getWritableDatabase().delete(Task.TABLE_NAME,Task.WHERE_ID, args);
+        getWritableDatabase().delete(Task.TABLE_NAME, Task.WHERE_ID, args);
         return;
     }
 
-    public Cursor selectTaskFromCategory(String categoryId){
+    public void deleteCategory(Long categoryId) {
+        String[] args = {Long.toString(categoryId)};
+        getWritableDatabase().delete(Category.TABLE_NAME, Category.WHERE_ID, args);
+        getWritableDatabase().delete(Task.TABLE_NAME, Task.WHERE_CATEGORY_ID, args);
+        return;
+    }
 
-        String[] args = {categoryId};
+    public Cursor selectTaskFromCategory(long categoryId){
+
+        String[] args = {Long.toString(categoryId)};
         return getWritableDatabase().rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
     }
 

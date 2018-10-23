@@ -4,7 +4,7 @@ import java.util.ArrayList;
 // TODO - probably actually want to call this category TBH LOL
 public class Category {
 
-    private int id;
+    private long id;
     private String title;
     public ArrayList<Task> list; // is this necessary?
 
@@ -17,7 +17,7 @@ public class Category {
         this.title = title;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

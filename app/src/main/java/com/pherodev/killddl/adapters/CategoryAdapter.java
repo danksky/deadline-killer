@@ -16,9 +16,11 @@ import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
 
+import dbhelpers.DatabaseHelper;
+
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    ArrayList<Category> categories;
+    public ArrayList<Category> categories;
 
     public CategoryAdapter(ArrayList<Category> categories) {
         this.categories = categories;
@@ -47,15 +49,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
+    public class CategoryViewHolder extends RecyclerView.ViewHolder {
+        CardView categoryCardView;
         TextView categoryTitle;
         long categoryId;
 
-        CategoryViewHolder(View itemView) {
+        public CategoryViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cv);
-            cv.setOnClickListener(new View.OnClickListener() {
+            categoryCardView = (CardView)itemView.findViewById(R.id.card_view_category);
+            categoryTitle = (TextView)itemView.findViewById(R.id.category_title);
+
+            categoryCardView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     // Based on which item was clicked, we want to open the Tasks activity with that ID
                     // Maybe we do this in OnCreateViewHolder?
@@ -63,8 +67,20 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                     intent.putExtra("CATEGORY_ID", categoryId);
                     v.getContext().startActivity(intent);
                 }
-            }) ;
-            categoryTitle = (TextView)itemView.findViewById(R.id.category_title);
+            });
+
+            categoryCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int position = getLayoutPosition();
+                    DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
+                    dbHelper.deleteCategory(categories.get(position).getId());
+                    dbHelper.close();
+                    categories.remove(position);
+                    notifyItemRemoved(position);
+                    return true;
+                }
+            });
         }
     }
 
