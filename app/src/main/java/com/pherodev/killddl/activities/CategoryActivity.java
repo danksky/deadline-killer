@@ -36,7 +36,7 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Task Categories");
+        setTitle("Deadline Categories");
 //        mActivityMainBinding = DataBindingUtil.setContentView(
 //                this, R.layout.activity_main);
         setContentView(R.layout.activity_category);

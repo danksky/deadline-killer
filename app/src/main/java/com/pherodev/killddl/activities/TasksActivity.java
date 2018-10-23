@@ -36,6 +36,7 @@ public class TasksActivity extends AppCompatActivity {
     private FloatingActionButton createTaskFloatingActionButton;
 
     private long categoryId;
+    private String categoryTitle;
     private ArrayList<Task> tasks;
 
     private DatabaseHelper database;
@@ -48,9 +49,6 @@ public class TasksActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         database = new DatabaseHelper(this);
-
-        setTitle("Tasks");
-
 
 
         Intent extrasIntent = getIntent();
@@ -70,6 +68,9 @@ public class TasksActivity extends AppCompatActivity {
         tasksLayoutManager = new LinearLayoutManager(this);
         tasksRecyclerView.setLayoutManager(tasksLayoutManager);
         loadTasksFromDB();
+
+        setTitle(categoryTitle + " Deadlines");
+
         tasksAdapter = new TasksAdapter(tasks);
         tasksRecyclerView.setAdapter(tasksAdapter);
 
@@ -94,7 +95,7 @@ public class TasksActivity extends AppCompatActivity {
         // Get all tasks by category Id
         Cursor cursor = database.selectTaskFromCategory(Long.toString(categoryId));
 
-
+        categoryTitle = database.getCategoryTitleById(Long.toString(categoryId));
 
         try {
             while (cursor.moveToNext()) {

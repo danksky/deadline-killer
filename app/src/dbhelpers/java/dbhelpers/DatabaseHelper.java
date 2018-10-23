@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 
+import com.pherodev.killddl.models.Category;
+
 import java.sql.PreparedStatement;
 import java.util.Date;
 
@@ -35,6 +37,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // These strings are SQL code to select rows from the Category table
         public static final String SELECT_ALL = "SELECT * FROM " + TABLE_NAME;
+        public static final String SELECT_CATEGORY_NAME_BY_ID = "SELECT " + COLUMN_TITLE +
+                " FROM " + TABLE_NAME +
+                " WHERE " + _ID + " = ?";
      }
 
     /*
@@ -97,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().insert(Category.TABLE_NAME, null, values);
     }
 
+
     public long createTask(int categoryId, String title, String description , String deadline){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
@@ -135,8 +141,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
     }
 
+    public String getCategoryTitleById(String categoryId) {
+        String categoryTitle = "";
 
-
+        String[] args = {categoryId};
+        Cursor cursor = getWritableDatabase().rawQuery(Category.SELECT_CATEGORY_NAME_BY_ID, args);
+        try {
+            while (cursor.moveToNext()) {
+                categoryTitle = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Category.COLUMN_TITLE));
+            }
+        } finally {
+            cursor.close();
+        }
+        return categoryTitle;
+    }
 
 
 }
