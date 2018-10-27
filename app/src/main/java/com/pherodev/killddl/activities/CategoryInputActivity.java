@@ -21,6 +21,9 @@ public class CategoryInputActivity extends AppCompatActivity {
     private FloatingActionButton completeInputFloatingActionButton;
     private EditText titleEditText;
 
+    // TODO: Implement edit mode
+    private boolean editMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,16 +49,32 @@ public class CategoryInputActivity extends AppCompatActivity {
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseHelper database = new DatabaseHelper(CategoryInputActivity.this);
-                long newRowId = database.createCategory(titleEditText.getText().toString() );
-                Toast.makeText(view.getContext(), "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
-                Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
-                startActivity(intent);
-                database.close();
+                if (verify().equals("OKAY")) {
+                    DatabaseHelper database = new DatabaseHelper(CategoryInputActivity.this);
+                    long newRowId = database.createCategory(titleEditText.getText().toString() );
+                    Toast.makeText(view.getContext(), "The new row ID is: " + newRowId, Toast.LENGTH_LONG).show();
+                    Snackbar.make(view, "Added new category: " + titleEditText.getText(), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    database.close();
+                    setResult(CategoryActivity.CATEGORY_CREATE_REQUEST);
+                    finish();
+                }
             }
         });
+    }
+
+    public String verify() {
+        String title = titleEditText.getText().toString();
+
+        if (title.equals("")) {
+            titleEditText.setError("TITLE EMPTY");
+            return "NOT OKAY, K?";
+        }
+        if (title.length() > 128) {
+            titleEditText.setError("TITLE TOO LONG");
+            return "NOT OKAY, K?";
+        }
+        return "OKAY";
     }
 
 }

@@ -1,5 +1,6 @@
 package com.pherodev.killddl.adapters;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.TaskInputActivity;
+import com.pherodev.killddl.activities.TasksActivity;
 import com.pherodev.killddl.models.Task;
 
 import java.util.ArrayList;
@@ -95,7 +97,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra("EDIT_TASK_DEADLINE", t.getDeadline().getTime());
                     editIntent.putExtra("EDIT_TASK_TITLE", t.getTitle());
                     editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
-                    view.getContext().startActivity(editIntent);
+                    ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }
             });
         }

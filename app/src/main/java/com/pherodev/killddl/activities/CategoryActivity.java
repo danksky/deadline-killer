@@ -1,5 +1,6 @@
 package com.pherodev.killddl.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.pherodev.killddl.R;
 //import com.pherodev.killddl.databinding.ActivityMainBinding;
 import com.pherodev.killddl.adapters.CategoryAdapter;
+import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
@@ -23,10 +25,16 @@ import dbhelpers.DatabaseHelper;
 
 public class CategoryActivity extends AppCompatActivity {
 
-    private RecyclerView rv;
-    private LinearLayoutManager llm;
+    private RecyclerView categoriesRecyclerView;
+    private RecyclerView.Adapter categoriesAdapter;
+    private RecyclerView.LayoutManager categoriesLayoutManager;
+
+    private FloatingActionButton createCategoryFloatingActionButton;
+
     private ArrayList<Category> categories;
 
+    public static final int CATEGORY_CREATE_REQUEST = 1;
+    public static final int CATEGORY_EDIT_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,29 +45,52 @@ public class CategoryActivity extends AppCompatActivity {
         categories = new ArrayList<Category>();
         loadCategoriesFromDB();
 
-        rv = (RecyclerView)findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
+        categoriesRecyclerView = (RecyclerView)findViewById(R.id.recycler_view_categories);
+        categoriesRecyclerView.setHasFixedSize(true);
 
-        llm = new LinearLayoutManager(this);
-        rv.setLayoutManager(llm);
+        categoriesLayoutManager = new LinearLayoutManager(this);
+        categoriesRecyclerView.setLayoutManager(categoriesLayoutManager);
+        loadCategoriesFromDB();
 
-        CategoryAdapter adapter = new CategoryAdapter(categories);
-        rv.setAdapter(adapter);
+        setTitle("Category");
+        categoriesAdapter = new CategoryAdapter(categories);
+        categoriesRecyclerView.setAdapter(categoriesAdapter);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        createCategoryFloatingActionButton = findViewById(R.id.fab_create_category);
+        createCategoryFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CategoryInputActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, CATEGORY_CREATE_REQUEST);
             }
         });
     }
 
-    private void loadCategoriesFromDB() {
-        System.out.println("HEY THERE");
-        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(), "result code " + resultCode + " (cancel)", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        switch (requestCode) {
+            case CATEGORY_CREATE_REQUEST:
+                loadCategoriesFromDB();
+                categoriesRecyclerView.getAdapter().notifyDataSetChanged();
+                return;
+            case CATEGORY_EDIT_REQUEST:
+                loadCategoriesFromDB();
+                categoriesRecyclerView.getAdapter().notifyDataSetChanged();
+                return;
+        }
+    }
 
+    private void loadCategoriesFromDB() {
+        if (this.categories == null)
+            this.categories = new ArrayList<>();
+        categories.clear();
+
+        SQLiteDatabase database = new DatabaseHelper(this).getReadableDatabase();
         Cursor cursor = database.rawQuery(DatabaseHelper.Category.SELECT_ALL, null);
 
         try {

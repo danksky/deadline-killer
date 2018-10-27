@@ -1,8 +1,11 @@
 package com.pherodev.killddl.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class Task {
+public class Task implements Parcelable {
 
     private long id;
     private long categoryId;
@@ -17,6 +20,25 @@ public class Task {
         this.description = description;
         this.deadline = deadline;
     }
+
+    protected Task(Parcel in) {
+        id = in.readLong();
+        categoryId = in.readLong();
+        title = in.readString();
+        description = in.readString();
+    }
+
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -49,5 +71,18 @@ public class Task {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeLong(categoryId);
+        parcel.writeString(title);
+        parcel.writeString(description);
     }
 }

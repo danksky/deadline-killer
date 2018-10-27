@@ -56,11 +56,8 @@ public class TasksActivity extends AppCompatActivity {
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
             categoryId = extrasIntent.getExtras().getLong("CATEGORY_ID");
-            System.out.println("In TasksActivity, have categoryId: " + categoryId);
-            Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " + categoryId, Toast.LENGTH_LONG);
         }
-        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_LONG);
-
+        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_SHORT);
 
         // Setup RecyclerView, LayoutManager, and Adapter
         tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
@@ -89,33 +86,31 @@ public class TasksActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(), "onActivityResult running", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "result code " + resultCode + " (cancel)", Toast.LENGTH_SHORT).show();
             return;
         }
         switch (requestCode) {
             case TASK_CREATE_REQUEST:
-                // TODO: Improve this UI update
                 loadTasksFromDB();
                 tasksRecyclerView.getAdapter().notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "TASK_CREATE_REQUEST", Toast.LENGTH_LONG).show();
                 return;
             case TASK_EDIT_REQUEST:
-                // Can't run startActivityForResult from TaskAdapter
+                loadTasksFromDB();
+                tasksRecyclerView.getAdapter().notifyDataSetChanged();
                 return;
         }
     }
 
-    // TODO: Implement single item on-long-click listener
-
     // TODO: Move this Cursor magic to DatabaseHelper
     public void loadTasksFromDB() {
-        this.tasks = new ArrayList<>();
+        if (this.tasks == null)
+            this.tasks = new ArrayList<>();
+        tasks.clear();
+
         DatabaseHelper database = new DatabaseHelper(this);
         // Get all tasks by category Id
         Cursor cursor = database.selectTaskFromCategory(categoryId);
-
         categoryTitle = database.getCategoryTitleById(Long.toString(categoryId));
-        tasks.clear();
 
         try {
             while (cursor.moveToNext()) {
@@ -134,6 +129,7 @@ public class TasksActivity extends AppCompatActivity {
             }
         } catch (ParseException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         } finally {
             cursor.close();
             database.close();
