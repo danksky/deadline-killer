@@ -6,6 +6,7 @@ import dbhelpers.DatabaseHelper;
 public class DatabaseHelperTests {
     @Test
     public void testVerifyRejectsBadDate() {
+        // todo
         assertThat(true).isTrue();
     }
 }
