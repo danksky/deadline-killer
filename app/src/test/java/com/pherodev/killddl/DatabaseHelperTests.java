@@ -9,4 +9,3 @@ public class DatabaseHelperTests {
         assertThat(true).isTrue();
     }
 }
- 
