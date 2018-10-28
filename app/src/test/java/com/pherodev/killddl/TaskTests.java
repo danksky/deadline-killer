@@ -10,7 +10,18 @@ import static org.junit.Assert.assertTrue;
 
 public class TaskTests {
     @Test
-    public void testTaskModelGetters() {
+    public void createTask() {
+        String title = "testing title";
+        String description = "testing description";
+        int idt = 123;
+        int idc = 321;
+        Date deadline = new Date(2018,10,17,29,300,20);
+
+        Task t = new Task(idt,idc,title,description,deadline);
+    }
+
+    @Test
+    public void getTaskInformation() {
         String title = "testing title";
         String description = "testing description";
         int idt = 123;
