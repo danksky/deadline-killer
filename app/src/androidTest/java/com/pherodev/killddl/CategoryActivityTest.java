@@ -59,8 +59,8 @@ public class CategoryActivityTest {
     @Test
     public void createCategoryItem() {
         onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).perform(click());
         onView(withId(R.id.fab_input_category_complete)).check(doesNotExist());
         onView(withId(R.id.recycler_view_categories)).check(matches(hasDescendant(withText(uniqueCategoryTitle))));
@@ -69,8 +69,8 @@ public class CategoryActivityTest {
     @Test
     public void emptyCategoryItem() {
         onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).perform(click());
         // Rather than check if the error message appears, check that your activity hasn't finished
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
@@ -82,8 +82,8 @@ public class CategoryActivityTest {
         StringBuilder excessiveLengthSB = new StringBuilder();
         for (int i = 0; i < 5; i++)
             excessiveLengthSB.append("qwertyuiopasdfghjklzxcvbnm");
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(excessiveLengthSB.toString()), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(excessiveLengthSB.toString()), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).perform(click());
         // Rather than check if the error message appears, check that your activity hasn't finished
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
@@ -115,6 +115,7 @@ public class CategoryActivityTest {
         onView(withId(R.id.fab_create_task)).check(matches(isDisplayed()));
         // This is going to clutter up CategoryActivity without delete
         categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
+        pressBack();
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
     }
 
