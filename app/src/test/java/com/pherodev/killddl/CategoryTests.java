@@ -1,6 +1,5 @@
 package com.pherodev.killddl;
 import org.junit.Test;
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 import com.pherodev.killddl.models.Category;
 
