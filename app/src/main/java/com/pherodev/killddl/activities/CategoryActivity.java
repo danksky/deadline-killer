@@ -105,4 +105,30 @@ public class CategoryActivity extends AppCompatActivity {
             database.close();
         }
     }
+
+    private void deleteCategoryAtPosition(int position) {
+        if (position < categories.size() && position >= 0) {
+            DatabaseHelper database = new DatabaseHelper(this);
+            database.deleteCategory(categories.get(position).getId());
+            categories.remove(position);
+            categoriesRecyclerView.getAdapter().notifyItemRemoved(position);
+        }
+    }
+
+    public void programmaticallyDeleteLastCategoryEntry() {
+        deleteCategoryAtPosition(categories.size()-1);
+    }
+
+    private void programmaticallyLaunchTasksActivity(int position) {
+        if (position >= 0) {
+            Intent intent = new Intent(this, TasksActivity.class);
+            intent.putExtra("CATEGORY_ID", categories.get(position).getId());
+            startActivity(intent);
+        }
+    }
+
+    public void programmaticallyLaunchTasksActivityWithLatestCategory () {
+        if (categories != null)
+            programmaticallyLaunchTasksActivity(categories.size()-1);
+    }
 }
