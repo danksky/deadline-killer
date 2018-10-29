@@ -71,10 +71,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // These strings are SQL code to select rows from the Deadline table
         public static final String SELECT_ALL_TASKS = "SELECT * FROM " + TABLE_NAME;
+        public static final String SELECT_TASK_BY_ID = "SELECT * FROM " +
+                TABLE_NAME + " WHERE " + _ID + " = ?";
         public static final String SELECT_ALL_TASKS_BY_CATEGORY_ID = "SELECT * FROM " +
-                TABLE_NAME +
-                " WHERE " + COLUMN_CATEGORY_ID + " = ?";
+                TABLE_NAME + " WHERE " + COLUMN_CATEGORY_ID + " = ?";
         public static final String WHERE_ID = _ID + " = ?;";
+
         public static final String WHERE_CATEGORY_ID = COLUMN_CATEGORY_ID + " = ?;";
     }
 
@@ -95,6 +97,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.execSQL(Task.DROP_TABLE);
         onCreate(database);
     }
+
+
+    /*
+     Custom methods added to Database helper, specific to Killddl
+      */
 
     public long createCategory(String title){
         ContentValues values = new ContentValues();
@@ -146,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor selectTaskFromCategory(long categoryId){
 
         String[] args = {Long.toString(categoryId)};
-        return getWritableDatabase().rawQuery(DatabaseHelper.Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
+        return getWritableDatabase().rawQuery(Task.SELECT_ALL_TASKS_BY_CATEGORY_ID, args);
     }
 
     public String getCategoryTitleById(String categoryId) {
