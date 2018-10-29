@@ -88,7 +88,6 @@ public class TasksActivityTest {
     public void createTaskWithGoodInput() {
         tasksActivitySetup();
 
-        // test action execution
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
         onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
@@ -96,19 +95,11 @@ public class TasksActivityTest {
         onView(withText("OK")).perform(click());
         onView(withId(R.id.fab_input_task_complete)).perform(click());
 
-        // test checks
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        DateFormat df = new SimpleDateFormat("EEE MMM dd");
-        String dateString = df.format(date);
+        String dateString = getDateString();
 
-        // back to tasks page
         onView(withId(R.id.fab_input_task_complete)).check(doesNotExist());
-        // make sure the title is right
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskTitle))));
-        // make sure the description is right
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskDescription))));
-        // should be today's date
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
 
         tasksActivityShutdown();
@@ -117,7 +108,7 @@ public class TasksActivityTest {
     @Test
     public void createTaskWithNoDeadline() {
         tasksActivitySetup();
-        
+
         onView(withId(R.id.fab_create_category)).perform(click());
         onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
@@ -235,6 +226,14 @@ public class TasksActivityTest {
         categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
         pressBack();
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
+    }
+
+    public String getDateString() {
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        DateFormat df = new SimpleDateFormat("EEE MMM dd");
+        String dateString = df.format(date);
+        return dateString;
     }
 
 }
