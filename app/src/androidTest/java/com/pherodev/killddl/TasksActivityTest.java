@@ -126,12 +126,12 @@ public class TasksActivityTest {
 /*
     @Test
     public void createTaskWithNoDeadline() {
-//        onView(withId(R.id.fab_create_category)).perform(click());
-//        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-//        onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
-//        onView(withId(R.id.fab_input_category_complete)).perform(click());
-//        onView(withId(R.id.fab_input_category_complete)).check(doesNotExist());
-//        onView(withId(R.id.recycler_view_categories)).check(matches(hasDescendant(withText(uniqueCategoryTitle))));
+        onView(withId(R.id.fab_create_category)).perform(click());
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
+        onView(withId(R.id.fab_input_category_complete)).perform(click());
+        onView(withId(R.id.fab_input_category_complete)).check(doesNotExist());
+        onView(withId(R.id.recycler_view_categories)).check(matches(hasDescendant(withText(uniqueCategoryTitle))));
     }
 
     @Test
