@@ -136,5 +136,19 @@ public class TasksActivity extends AppCompatActivity {
         }
 
 
+
+    }
+
+    public void deleteTaskAtPosition(int position) {
+        if (position < tasks.size() && position >= 0) {
+            DatabaseHelper db = new DatabaseHelper(this);
+            db.deleteCategory(tasks.get(position).getId());
+            tasks.remove(position);
+            tasksRecyclerView.getAdapter().notifyItemRemoved(position);
+        }
+    }
+
+    public void programaticallyDeleteLastTask() {
+        deleteTaskAtPosition(tasks.size()-1);
     }
 }

@@ -29,6 +29,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -135,30 +136,46 @@ public class TasksActivityTest {
 
         tasksActivityShutdown();
     }
-/*
+
     @Test
     public void createTaskWithNoDescription() {
-//        onView(withId(R.id.fab_create_category)).perform(click());
-//        StringBuilder excessiveLengthSB = new StringBuilder();
-//        for (int i = 0; i < 5; i++)
-//            excessiveLengthSB.append("qwertyuiopasdfghjklzxcvbnm");
-//        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(excessiveLengthSB.toString()), closeSoftKeyboard());
-//        onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
-//        onView(withId(R.id.fab_input_category_complete)).perform(click());
-//        // Rather than check if the error message appears, check that your activity hasn't finished
-//        onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
+        tasksActivitySetup();
+
+        onView(withId(R.id.fab_create_task)).perform(click());
+        onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
+        onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+
+        String dateString = getDateString();
+
+        onView(withId(R.id.fab_input_task_complete)).check(doesNotExist());
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskTitle))));
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(""))));
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
+
+        tasksActivityShutdown();
     }
 
-    // Must be run after deleteCategoryItem()
     @Test
-    public void deleteTask() {
-        onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-        pressBack();
-        // Otherwise this fails
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
-    }
+    public void deleteTaskItem() {
+        tasksActivitySetup();
 
+        onView(withId(R.id.fab_create_task)).perform(click());
+        onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
+        onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+
+        onView(withText(uniqueTaskTitle)).perform(longClick());
+
+
+        onView(withText(uniqueTaskTitle)).check(doesNotExist());
+
+        tasksActivityShutdown();
+    }
+    /*
     @Test
     public void editTaskTitle() {
         // Create a Category through UI to reach TasksActivity
