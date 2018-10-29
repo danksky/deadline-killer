@@ -74,6 +74,26 @@ public class TasksActivityTest {
     }
 
     @Test
+    public void createTaskWithGoodInput() {
+        // before every test to get to tasksactivity due to espresso contrib limitations
+        // note that this code has already been tested in CategoryActivityTest
+        onView(withId(R.id.fab_create_category)).perform(click());
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_category_complete)).perform(click());
+        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
+
+        // actual test
+        onView(withId(R.id.fab_create_task)).perform(click());
+
+        // after every test to clean up the categories page
+        // note that this code has already been tested in CategoryActivityTest
+        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
+        pressBack();
+        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
+
+    }
+/*
+    @Test
     public void createTaskWithNoDeadline() {
 //        onView(withId(R.id.fab_create_category)).perform(click());
 //        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
@@ -104,12 +124,6 @@ public class TasksActivityTest {
 //        onView(withId(R.id.fab_input_category_complete)).perform(click());
 //        // Rather than check if the error message appears, check that your activity hasn't finished
 //        onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void createTaskWithGoodInput() {
-        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
     }
 
     // Must be run after deleteCategoryItem()
@@ -161,8 +175,24 @@ public class TasksActivityTest {
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
     }
 
+    @Test
     public void editTaskWithNoTitle() {
 
     }
+
+    @Test
+    public void launchTasksActivity() {
+        // Create a Category through UI to reach TasksActivity
+        onView(withId(R.id.fab_create_category)).perform(click());
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_category_complete)).perform(click());
+        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
+        onView(withId(R.id.fab_create_task)).check(matches(isDisplayed()));
+        // This is going to clutter up CategoryActivity without delete
+        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
+        pressBack();
+        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
+    }
+*/
 
 }
