@@ -2,16 +2,19 @@ package com.pherodev.killddl;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.DatePicker;
 
 import com.pherodev.killddl.activities.CategoryActivity;
 import com.pherodev.killddl.activities.TasksActivity;
 import com.pherodev.killddl.models.Category;
 
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import androidx.test.rule.ActivityTestRule;
@@ -29,6 +32,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -65,6 +69,8 @@ public class TasksActivityTest {
     public ActivityTestRule<CategoryActivity> categoryActivityRule =
             new ActivityTestRule<>(CategoryActivity.class);
     public String uniqueCategoryTitle = UUID.randomUUID().toString();
+    public String uniqueTaskTitle = UUID.randomUUID().toString();
+    public String uniqueTaskDescription = UUID.randomUUID().toString();
 
     @Test
     public void useAppContext() {
@@ -82,15 +88,20 @@ public class TasksActivityTest {
         onView(withId(R.id.fab_input_category_complete)).perform(click());
         categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
 
+
         // actual test
         onView(withId(R.id.fab_create_task)).perform(click());
+        onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
+        onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+        onView(withText("OK")).perform(click());
 
-        // after every test to clean up the categories page
+
+        // after every test to clean up the categories page/DB
         // note that this code has already been tested in CategoryActivityTest
         categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
         pressBack();
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
-
     }
 /*
     @Test
