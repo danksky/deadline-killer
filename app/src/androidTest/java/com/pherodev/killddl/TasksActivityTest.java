@@ -9,6 +9,8 @@ import com.pherodev.killddl.activities.TasksActivity;
 import com.pherodev.killddl.models.Category;
 
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,7 +90,6 @@ public class TasksActivityTest {
     // TODO - make it so you don't have to setup/shutdown every time (nice to have, not necessary)
     @Test
     public void createTaskWithGoodInput() {
-        tasksActivitySetup();
 
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
@@ -104,12 +105,10 @@ public class TasksActivityTest {
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskDescription))));
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
 
-        tasksActivityShutdown();
     }
 
     @Test
     public void createTaskWithNoDeadline() {
-        tasksActivitySetup();
 
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
@@ -118,13 +117,11 @@ public class TasksActivityTest {
 
 
         onView(withId(R.id.fab_input_task_complete)).check(matches(isDisplayed()));
-        tasksActivityShutdown();
     }
 
 
     @Test
     public void createTaskWithNoTitle() {
-        tasksActivitySetup();
 
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
@@ -134,12 +131,10 @@ public class TasksActivityTest {
 
         onView(withId(R.id.fab_input_task_complete)).check(matches(isDisplayed()));
 
-        tasksActivityShutdown();
     }
 
     @Test
     public void createTaskWithNoDescription() {
-        tasksActivitySetup();
 
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
@@ -154,12 +149,10 @@ public class TasksActivityTest {
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(""))));
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
 
-        tasksActivityShutdown();
     }
 
     @Test
     public void deleteTaskItem() {
-        tasksActivitySetup();
 
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
@@ -173,7 +166,6 @@ public class TasksActivityTest {
 
         onView(withText(uniqueTaskTitle)).check(doesNotExist());
 
-        tasksActivityShutdown();
     }
     /*
     @Test
@@ -220,20 +212,9 @@ public class TasksActivityTest {
 
     }
 
-    @Test
-    public void launchTasksActivity() {
-        // Create a Category through UI to reach TasksActivity
-        onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-        onView(withId(R.id.fab_input_category_complete)).perform(click());
-        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
-        onView(withId(R.id.fab_create_task)).check(matches(isDisplayed()));
-        // This is going to clutter up CategoryActivity without delete
-        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
-        pressBack();
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
-    }
+
 */
+    @Before
     public void tasksActivitySetup() {
         // before every test to get to tasksactivity due to espresso contrib limitations
         // note that this code has already been tested in CategoryActivityTest
@@ -243,6 +224,7 @@ public class TasksActivityTest {
         categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
     }
 
+    @After
     public void tasksActivityShutdown() {
         // after every test to clean up the categories page/DB
         // note that this code has already been tested in CategoryActivityTest
