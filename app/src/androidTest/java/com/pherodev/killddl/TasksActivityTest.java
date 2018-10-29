@@ -86,13 +86,7 @@ public class TasksActivityTest {
 
     @Test
     public void createTaskWithGoodInput() {
-        // before every test to get to tasksactivity due to espresso contrib limitations
-        // note that this code has already been tested in CategoryActivityTest
-        onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-        onView(withId(R.id.fab_input_category_complete)).perform(click());
-        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
-
+        tasksActivitySetup();
 
         // test action execution
         onView(withId(R.id.fab_create_task)).perform(click());
@@ -117,22 +111,23 @@ public class TasksActivityTest {
         // should be today's date
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
 
-        // after every test to clean up the categories page/DB
-        // note that this code has already been tested in CategoryActivityTest
-        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
-        pressBack();
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
+        tasksActivityShutdown();
     }
-/*
+
     @Test
     public void createTaskWithNoDeadline() {
+        tasksActivitySetup();
+        
         onView(withId(R.id.fab_create_category)).perform(click());
         onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
         onView(withId(R.id.fab_input_category_complete)).check(matches(isDisplayed()));
         onView(withId(R.id.fab_input_category_complete)).perform(click());
         onView(withId(R.id.fab_input_category_complete)).check(doesNotExist());
         onView(withId(R.id.recycler_view_categories)).check(matches(hasDescendant(withText(uniqueCategoryTitle))));
+
+        tasksActivityShutdown();
     }
+/*
 
     @Test
     public void createTaskWithNoTitle() {
@@ -225,5 +220,21 @@ public class TasksActivityTest {
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
     }
 */
+    public void tasksActivitySetup() {
+        // before every test to get to tasksactivity due to espresso contrib limitations
+        // note that this code has already been tested in CategoryActivityTest
+        onView(withId(R.id.fab_create_category)).perform(click());
+        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_category_complete)).perform(click());
+        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
+    }
+
+    public void tasksActivityShutdown() {
+        // after every test to clean up the categories page/DB
+        // note that this code has already been tested in CategoryActivityTest
+        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
+        pressBack();
+        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
+    }
 
 }
