@@ -29,6 +29,7 @@ import androidx.test.runner.AndroidJUnit4;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
@@ -87,7 +88,7 @@ public class TasksActivityTest {
         assertEquals("com.pherodev.killddl", appContext.getPackageName());
     }
 
-    // TODO - make it so you don't have to setup/shutdown every time (nice to have, not necessary)
+
     @Test
     public void createTaskWithGoodInput() {
 
@@ -167,20 +168,25 @@ public class TasksActivityTest {
         onView(withText(uniqueTaskTitle)).check(doesNotExist());
 
     }
-    /*
-    @Test
-    public void editTaskTitle() {
-        // Create a Category through UI to reach TasksActivity
-        onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-        onView(withId(R.id.fab_input_category_complete)).perform(click());
-        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
-        onView(withId(R.id.fab_create_task)).check(matches(isDisplayed()));
-        // This is going to clutter up CategoryActivity without delete
-        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
-    }
 
+    @Test
+    public void editTaskTitle() throws InterruptedException {
+        onView(withId(R.id.fab_create_task)).perform(click());
+        onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
+        onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+        Thread.sleep(1000);
+        onView(withText(uniqueTaskTitle)).perform(click());
+
+        String uniqueEditText = UUID.randomUUID().toString();
+        onView(withId(R.id.edit_text_input_task_title)).perform(clearText(), typeText(uniqueEditText), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueEditText))));
+    }
+/*
     @Test
     public void editTaskDescription() {
         // Create a Category through UI to reach TasksActivity
@@ -207,10 +213,7 @@ public class TasksActivityTest {
         onView(withText(uniqueCategoryTitle)).check(doesNotExist());
     }
 
-    @Test
-    public void editTaskWithNoTitle() {
 
-    }
 
 
 */
