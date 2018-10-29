@@ -103,8 +103,7 @@ public class TaskInputActivity extends AppCompatActivity {
         taskInputDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month = month + 1; // January is 0
-                String date = month + "/" + day + "/" + year;
+                String date = month + 1 + "/" + day + "/" + year;
 
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day);
