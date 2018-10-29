@@ -51,29 +51,12 @@ import static org.junit.Assert.*;
 /**
  * Instrumented test, which will execute on an Android device.
  *
-     Opening (1)
-        - Open right task
-     Adding (3)
-        - Add with good input
-         - Add with no date
-         - Add with no title
-     Editing (3)
-         - Edit with good input
-         - Edit with no date
-         - Edit with no title
-     Deleting (1)
-        - Delete
-
- Total: 1 + 3 + 3 + 1 = 8
-
- *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class TasksActivityTest {
 
-    // Set up a TasksActivity with a categoryId for testing
     @Rule
     public ActivityTestRule<CategoryActivity> categoryActivityRule =
             new ActivityTestRule<>(CategoryActivity.class);
@@ -81,7 +64,7 @@ public class TasksActivityTest {
     public String uniqueTaskTitle = UUID.randomUUID().toString();
     public String uniqueTaskDescription = UUID.randomUUID().toString();
 
-/*
+
     @Test
     public void createTaskWithGoodInput() {
 
@@ -197,7 +180,7 @@ public class TasksActivityTest {
 
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueEditText))));
     }
-*/
+
     @Test
     public void editTaskDate() throws InterruptedException {
         onView(withId(R.id.fab_create_task)).perform(click());
