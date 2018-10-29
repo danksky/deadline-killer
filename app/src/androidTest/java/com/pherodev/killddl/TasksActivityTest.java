@@ -81,14 +81,7 @@ public class TasksActivityTest {
     public String uniqueTaskTitle = UUID.randomUUID().toString();
     public String uniqueTaskDescription = UUID.randomUUID().toString();
 
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = categoryActivityRule.getActivity().getApplicationContext();
-        assertEquals("com.pherodev.killddl", appContext.getPackageName());
-    }
-
-
+/*
     @Test
     public void createTaskWithGoodInput() {
 
@@ -186,20 +179,27 @@ public class TasksActivityTest {
 
         onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueEditText))));
     }
-/*
-    @Test
-    public void editTaskDescription() {
-        // Create a Category through UI to reach TasksActivity
-        onView(withId(R.id.fab_create_category)).perform(click());
-        onView(withId(R.id.edit_text_input_category_title)).perform(typeText(uniqueCategoryTitle), closeSoftKeyboard());
-        onView(withId(R.id.fab_input_category_complete)).perform(click());
-        categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
-        onView(withId(R.id.fab_create_task)).check(matches(isDisplayed()));
-        // This is going to clutter up CategoryActivity without delete
-        categoryActivityRule.getActivity().programmaticallyDeleteLastCategoryEntry();
-        onView(withText(uniqueCategoryTitle)).check(doesNotExist());
-    }
 
+*/
+
+    @Test
+    public void editTaskDescription() throws InterruptedException {
+        onView(withId(R.id.fab_create_task)).perform(click());
+        onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
+        onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+        Thread.sleep(1000);
+        onView(withText(uniqueTaskTitle)).perform(click());
+
+        String uniqueEditText = UUID.randomUUID().toString();
+        onView(withId(R.id.edit_text_input_task_description)).perform(clearText(), typeText(uniqueEditText), closeSoftKeyboard());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
+
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueEditText))));
+    }
+/*
     @Test
     public void editTaskDate() {
         // Create a Category through UI to reach TasksActivity
