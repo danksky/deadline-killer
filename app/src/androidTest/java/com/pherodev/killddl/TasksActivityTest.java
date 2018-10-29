@@ -13,8 +13,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import androidx.test.rule.ActivityTestRule;
@@ -35,6 +38,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.hamcrest.core.StringContains.containsString;
 
 
 import static org.junit.Assert.*;
@@ -89,13 +94,28 @@ public class TasksActivityTest {
         categoryActivityRule.getActivity().programmaticallyLaunchTasksActivityWithLatestCategory();
 
 
-        // actual test
+        // test action execution
         onView(withId(R.id.fab_create_task)).perform(click());
         onView(withId(R.id.edit_text_input_task_title)).perform(typeText(uniqueTaskTitle), closeSoftKeyboard());
         onView(withId(R.id.edit_text_input_task_description)).perform(typeText(uniqueTaskDescription), closeSoftKeyboard());
         onView(withId(R.id.text_view_input_task_deadline)).perform(click());
         onView(withText("OK")).perform(click());
+        onView(withId(R.id.fab_input_task_complete)).perform(click());
 
+        // test checks
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        DateFormat df = new SimpleDateFormat("EEE MMM dd");
+        String dateString = df.format(date);
+
+        // back to tasks page
+        onView(withId(R.id.fab_input_task_complete)).check(doesNotExist());
+        // make sure the title is right
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskTitle))));
+        // make sure the description is right
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(uniqueTaskDescription))));
+        // should be today's date
+        onView(withId(R.id.recycler_view_tasks)).check(matches(hasDescendant(withText(containsString(dateString)))));
 
         // after every test to clean up the categories page/DB
         // note that this code has already been tested in CategoryActivityTest
