@@ -1,5 +1,6 @@
 package com.pherodev.killddl;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.DatePicker;
@@ -41,6 +42,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -196,11 +198,12 @@ public class TasksActivityTest {
 
 
         onView(withId(R.id.text_view_input_task_deadline)).perform(click());
+
+
         onView(withText(monthString)).perform(click());
 
-        Thread.sleep(1000);
+
         onView(withText(monthString)).perform(typeText("Jan"));
-        Thread.sleep(1000);
 
         onView(withText("Jan")).perform(closeSoftKeyboard());
 
