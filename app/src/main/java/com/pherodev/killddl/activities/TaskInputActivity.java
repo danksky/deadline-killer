@@ -8,15 +8,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import dbhelpers.DatabaseHelper;
 
@@ -27,6 +31,11 @@ public class TaskInputActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private DatePickerDialog.OnDateSetListener taskInputDateSetListener;
     private TextView deadlineTextView;
+
+    private Spinner colorSpinner;
+    private List<String> colors;
+
+
     private long categoryId;
 
     private boolean editMode = false;
@@ -64,6 +73,18 @@ public class TaskInputActivity extends AppCompatActivity {
         deadlineTextView = (TextView) findViewById(R.id.text_view_input_task_deadline);
         titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
         descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
+
+        colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
+        colors = new ArrayList<String>();
+        colors.add("Red");
+        colors.add("Orange");
+        colors.add("Yellow");
+        colors.add("Green");
+        colors.add("Blue");
+        colors.add("Violet");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, colors);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colorSpinner.setAdapter(dataAdapter);
 
         if (editMode) {
             // Populate accordingly
