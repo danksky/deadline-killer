@@ -76,6 +76,7 @@ public class TaskInputActivity extends AppCompatActivity {
         titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
         descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
 
+        // Color spinner stuff
         colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
         colors = new ArrayList<String>();
         colors.add("Red");
@@ -97,6 +98,7 @@ public class TaskInputActivity extends AppCompatActivity {
             }
         });
 
+        // Edit mode stuff
         if (editMode) {
             // Populate accordingly
             categoryId = extrasIntent.getExtras().getLong("EDIT_TASK_CATEGORY_ID");
@@ -155,8 +157,7 @@ public class TaskInputActivity extends AppCompatActivity {
                     String title = titleEditText.getText().toString();
                     String description = descriptionEditText.getText().toString();
                     String deadlineText = deadline.toString();
-                    // TODO - Add Color to the database
-                    String color = colorSpinner.getSelectedItem().toString();
+                    int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
                     System.out.println("COLOR SELECTED = " + color);
 
                     DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
