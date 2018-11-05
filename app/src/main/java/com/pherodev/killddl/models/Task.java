@@ -13,6 +13,15 @@ public class Task implements Parcelable {
     private String description;
     private Date deadline;
 
+    // Sprint 1 new variables
+    // color
+    // isDone
+    // listPosition
+
+    private String color;
+    private boolean isDone;
+    private long listPosition;
+
     public Task (long id, long categoryId, String title, String description, Date deadline) {
         this.id = id;
         this.categoryId = categoryId;

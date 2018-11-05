@@ -64,19 +64,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // These strings are SQL code to create and drop the Deadline table
         public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 TABLE_NAME + " (" +
+                // id
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                // title
                 COLUMN_TITLE + " TEXT, " +
+                // desc
                 COLUMN_DESCRIPTION + " TEXT, " +
+                // due date
                 COLUMN_DUE_DATE + " TEXT, " +
+                // category id
                 COLUMN_CATEGORY_ID + " INTEGER, " +
-                // Turning COLUMN_CATEGORY_ID into foreign key that references
-                // the Category table's column, id."
+                // color
+                COLUMN_COLOR + " INTEGER, " +
+                // is done?
+                COLUMN_IS_DONE + " INTEGER DEFAULT 0, " +
+                // list position
+                COLUMN_LIST_POSITION + " INTEGER, " +
+                // make category_id foreign key
                 "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " +
-                Category.TABLE_NAME + "("+Category._ID+")" + " );";
-
-//                COLUMN_COLOR + " TEXT, " +
-//                COLUMN_IS_DONE + " INTEGER DEFAULT 0, " +
-//                COLUMN_LIST_POSITION + " INTEGER " + ");";
+                Category.TABLE_NAME + "("+Category._ID+")" + ");";
 
 
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
