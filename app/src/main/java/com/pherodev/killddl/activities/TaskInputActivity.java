@@ -3,11 +3,13 @@ package com.pherodev.killddl.activities;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -77,14 +79,23 @@ public class TaskInputActivity extends AppCompatActivity {
         colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
         colors = new ArrayList<String>();
         colors.add("Red");
-        colors.add("Orange");
-        colors.add("Yellow");
-        colors.add("Green");
         colors.add("Blue");
-        colors.add("Violet");
+        colors.add("Green");
+        colors.add("Purple");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, colors);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         colorSpinner.setAdapter(dataAdapter);
+        colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String colorString = ((TextView) parent.getChildAt(0)).getText().toString();
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor(colorString));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         if (editMode) {
             // Populate accordingly
@@ -144,6 +155,9 @@ public class TaskInputActivity extends AppCompatActivity {
                     String title = titleEditText.getText().toString();
                     String description = descriptionEditText.getText().toString();
                     String deadlineText = deadline.toString();
+                    // TODO - Add Color to the database
+                    String color = colorSpinner.getSelectedItem().toString();
+                    System.out.println("COLOR SELECTED = " + color);
 
                     DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
 
