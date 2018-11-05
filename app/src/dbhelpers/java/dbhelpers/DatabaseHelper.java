@@ -53,6 +53,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_DUE_DATE = "due_date";
         public static final String COLUMN_CATEGORY_ID = "category_id";
+        public static final String COLUMN_COLOR = "color";
+        public static final String COLUMN_IS_DONE = "is_done";
+        public static final String COLUMN_LIST_POSITION = "list_position";
+
+
+        // TODO - Some sort of list position like https://stackoverflow.com/questions/36474658/save-reordered-recyclerview-in-sqlite
+
 
         // These strings are SQL code to create and drop the Deadline table
         public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -65,7 +72,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // Turning COLUMN_CATEGORY_ID into foreign key that references
                 // the Category table's column, id."
                 "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " +
-                Category.TABLE_NAME + "("+Category._ID+") );";
+                Category.TABLE_NAME + "("+Category._ID+")" + " );";
+
+//                COLUMN_COLOR + " TEXT, " +
+//                COLUMN_IS_DONE + " INTEGER DEFAULT 0, " +
+//                COLUMN_LIST_POSITION + " INTEGER " + ");";
+
 
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
