@@ -54,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String COLUMN_DUE_DATE = "due_date";
         public static final String COLUMN_CATEGORY_ID = "category_id";
         public static final String COLUMN_COLOR = "color";
-        public static final String COLUMN_IS_DONE = "is_done";
+        public static final String COLUMN_IS_COMPLETED = "is_completed";
         public static final String COLUMN_LIST_POSITION = "list_position";
 
 
@@ -76,8 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_CATEGORY_ID + " INTEGER, " +
                 // color
                 COLUMN_COLOR + " INTEGER, " +
-                // is done?
-                COLUMN_IS_DONE + " INTEGER DEFAULT 0, " +
+                // is completed?
+                COLUMN_IS_COMPLETED + " INTEGER DEFAULT 0, " +
                 // list position
                 COLUMN_LIST_POSITION + " INTEGER, " +
                 // make category_id foreign key

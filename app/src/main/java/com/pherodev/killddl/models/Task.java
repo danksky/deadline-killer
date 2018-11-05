@@ -19,7 +19,7 @@ public class Task implements Parcelable {
     // listPosition
 
     private String color;
-    private boolean isDone;
+    private boolean isCompleted;
     private long listPosition;
 
     public Task (long id, long categoryId, String title, String description, Date deadline) {
