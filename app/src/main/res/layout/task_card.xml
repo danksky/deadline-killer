@@ -26,6 +26,10 @@
                 android:layout_gravity="left"
                 android:layout_marginRight="0dp" />
 
+            <View
+                android:layout_width="5dp"
+                android:layout_height="match_parent"/>
+
             <LinearLayout
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
