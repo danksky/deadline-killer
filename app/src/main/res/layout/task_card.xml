@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
@@ -11,30 +11,46 @@
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="4dp"
         card_view:cardUseCompatPadding="true">
+
         <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:orientation="vertical">
-            <TextView
-                style="@android:style/TextAppearance.Large"
-                android:id="@+id/text_view_task_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                style="@android:style/TextAppearance.Medium"
-                android:id="@+id/text_view_task_deadline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                style="@android:style/TextAppearance.Small"
-                android:id="@+id/text_view_task_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:orientation="horizontal">
 
+            <View
+                android:id="@+id/view_task_color"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:background="@color/cardview_dark_background"
+                android:layout_marginLeft="0dp"
+                android:layout_gravity="left"
+                android:layout_marginRight="0dp" />
+
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                        style="@android:style/TextAppearance.Large"
+                        android:id="@+id/text_view_task_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                <TextView
+                    style="@android:style/TextAppearance.Medium"
+                    android:id="@+id/text_view_task_deadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    style="@android:style/TextAppearance.Small"
+                    android:id="@+id/text_view_task_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
 
 
     </android.support.v7.widget.CardView>
 
 
-</LinearLayout>
+</RelativeLayout>
