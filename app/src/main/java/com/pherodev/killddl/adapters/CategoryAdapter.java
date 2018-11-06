@@ -1,7 +1,7 @@
 package com.pherodev.killddl.adapters;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,17 +10,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pherodev.killddl.R;
-import com.pherodev.killddl.activities.CategoryInputActivity;
 import com.pherodev.killddl.activities.TasksActivity;
+import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import dbhelpers.DatabaseHelper;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> implements ItemTouchHelperAdapter {
 
     public ArrayList<Category> categories;
+    private Context context;
 
     public CategoryAdapter(ArrayList<Category> categories) {
         this.categories = categories;
@@ -35,6 +37,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public CategoryViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.category_card, viewGroup, false);
         CategoryViewHolder cvh = new CategoryViewHolder(v);
+        context = v.getContext();
         return cvh;
     }
 
@@ -47,6 +50,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        if (context != null) {
+            DatabaseHelper dbHelper = new DatabaseHelper(context);
+            dbHelper.deleteCategory(categories.get(position).getId());
+            dbHelper.close();
+            categories.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(categories, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     public class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -69,18 +90,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 }
             });
 
-            categoryCardView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getLayoutPosition();
-                    DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-                    dbHelper.deleteCategory(categories.get(position).getId());
-                    dbHelper.close();
-                    categories.remove(position);
-                    notifyItemRemoved(position);
-                    return true;
-                }
-            });
         }
     }
 

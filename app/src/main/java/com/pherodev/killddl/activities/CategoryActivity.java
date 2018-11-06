@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,17 +18,21 @@ import com.pherodev.killddl.R;
 //import com.pherodev.killddl.databinding.ActivityMainBinding;
 import com.pherodev.killddl.adapters.CategoryAdapter;
 import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.gestures.OnStartDragListener;
+import com.pherodev.killddl.gestures.SimpleItemTouchHelperCallback;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
 
 import dbhelpers.DatabaseHelper;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity implements OnStartDragListener {
 
     private RecyclerView categoriesRecyclerView;
-    private RecyclerView.Adapter categoriesAdapter;
+    private CategoryAdapter categoriesAdapter;
     private RecyclerView.LayoutManager categoriesLayoutManager;
+    private ItemTouchHelper itemTouchHelper;
+    private ItemTouchHelper.Callback callback;
 
     private FloatingActionButton createCategoryFloatingActionButton;
 
@@ -42,6 +47,7 @@ public class CategoryActivity extends AppCompatActivity {
         setTitle("Deadline Categories");
         setContentView(R.layout.activity_category);
 
+        setTitle("Category");
         categories = new ArrayList<Category>();
         loadCategoriesFromDB();
 
@@ -50,11 +56,12 @@ public class CategoryActivity extends AppCompatActivity {
 
         categoriesLayoutManager = new LinearLayoutManager(this);
         categoriesRecyclerView.setLayoutManager(categoriesLayoutManager);
-        loadCategoriesFromDB();
-
-        setTitle("Category");
         categoriesAdapter = new CategoryAdapter(categories);
         categoriesRecyclerView.setAdapter(categoriesAdapter);
+        callback = new SimpleItemTouchHelperCallback(categoriesAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(categoriesRecyclerView);
+        loadCategoriesFromDB();
 
         createCategoryFloatingActionButton = findViewById(R.id.fab_create_category);
         createCategoryFloatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -131,4 +138,10 @@ public class CategoryActivity extends AppCompatActivity {
         if (categories != null)
             programmaticallyLaunchTasksActivity(categories.size()-1);
     }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        itemTouchHelper.startDrag(viewHolder);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.pherodev.killddl.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.TaskInputActivity;
 import com.pherodev.killddl.activities.TasksActivity;
+import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Task;
 
 import org.w3c.dom.Text;
@@ -22,9 +24,10 @@ import java.util.ArrayList;
 
 import dbhelpers.DatabaseHelper;
 
-public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
+public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> implements ItemTouchHelperAdapter {
 
     public ArrayList<Task> tasks;
+    private Context context;
 
     public TasksAdapter(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -37,6 +40,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_card, parent,false);
         TasksViewHolder tvh = new TasksViewHolder(v);
+        context = v.getContext();
         return tvh;
     }
 
@@ -71,6 +75,20 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         super.onAttachedToRecyclerView(recyclerView);
     }
 
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        return false;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        dbHelper.deleteTask(tasks.get(position).getId());
+        dbHelper.close();
+        tasks.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public class TasksViewHolder extends RecyclerView.ViewHolder {
 
         CardView taskCardView;
@@ -81,24 +99,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         public TasksViewHolder(final View itemView) {
             super(itemView);
-            taskCardView = (CardView) itemView.findViewById(R.id.card_view_task);
-            taskTitle = (TextView) itemView.findViewById(R.id.text_view_task_title);
-            taskDeadline = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
+            taskCardView    = (CardView) itemView.findViewById(R.id.card_view_task);
+            taskTitle       = (TextView) itemView.findViewById(R.id.text_view_task_title);
+            taskDeadline    = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
             taskDescription = (TextView) itemView.findViewById(R.id.text_view_task_description);
-            colorFlag = (View) itemView.findViewById(R.id.view_task_color);
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getLayoutPosition();
-                    DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-                    dbHelper.deleteTask(tasks.get(position).getId());
-                    dbHelper.close();
-                    tasks.remove(position);
-                    notifyItemRemoved(position);
-                    return true;
-                }
-            });
+            colorFlag       = (View) itemView.findViewById(R.id.view_task_color);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

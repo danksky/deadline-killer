@@ -11,11 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
+import com.pherodev.killddl.adapters.CategoryAdapter;
 import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.gestures.SimpleItemTouchHelperCallback;
 import com.pherodev.killddl.models.Category;
 import com.pherodev.killddl.models.Task;
 
@@ -31,8 +34,10 @@ import dbhelpers.DatabaseHelper;
 public class TasksActivity extends AppCompatActivity {
 
     private RecyclerView tasksRecyclerView;
-    private RecyclerView.Adapter tasksAdapter;
+    private TasksAdapter tasksAdapter;
     private RecyclerView.LayoutManager tasksLayoutManager;
+    private ItemTouchHelper itemTouchHelper;
+    private ItemTouchHelper.Callback callback;
 
     private FloatingActionButton createTaskFloatingActionButton;
 
@@ -50,26 +55,31 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         Intent extrasIntent = getIntent();
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
             categoryId = extrasIntent.getExtras().getLong("CATEGORY_ID");
+            loadTasksFromDB();
+            setTitle(categoryTitle + " Deadlines");
         }
-        else Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_SHORT);
+        else {
+            Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_SHORT);
+            setResult(CategoryActivity.RESULT_CANCELED);
+            finish();
+        }
 
         // Setup RecyclerView, LayoutManager, and Adapter
         tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
         tasksRecyclerView.setHasFixedSize(true);
         tasksLayoutManager = new LinearLayoutManager(this);
-        tasksRecyclerView.setLayoutManager(tasksLayoutManager);
-        loadTasksFromDB();
-
-        setTitle(categoryTitle + " Deadlines");
-
         tasksAdapter = new TasksAdapter(tasks);
+        tasksRecyclerView.setLayoutManager(tasksLayoutManager);
         tasksRecyclerView.setAdapter(tasksAdapter);
+        callback = new SimpleItemTouchHelperCallback(tasksAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
+
 
         createTaskFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_create_task);
         createTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
