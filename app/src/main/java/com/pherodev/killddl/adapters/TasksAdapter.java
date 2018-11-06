@@ -57,6 +57,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         holder.taskDeadline.setText(tasks.get(position).getDeadline().toString());
         holder.taskDescription.setText(tasks.get(position).getDescription());
+        holder.colorFlag.setBackgroundColor(tasks.get(position).getColor());
     }
 
     // Return the size of the dataset (invoked by the layout manager)
@@ -76,6 +77,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         TextView taskTitle;
         TextView taskDeadline;
         TextView taskDescription;
+        View colorFlag;
 
         public TasksViewHolder(final View itemView) {
             super(itemView);
@@ -83,6 +85,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             taskTitle = (TextView) itemView.findViewById(R.id.text_view_task_title);
             taskDeadline = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
             taskDescription = (TextView) itemView.findViewById(R.id.text_view_task_description);
+            colorFlag = (View) itemView.findViewById(R.id.view_task_color);
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -110,6 +113,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra("EDIT_TASK_TITLE", t.getTitle());
                     editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
                     editIntent.putExtra("EDIT_TASK_COMPLETED", t.getIsCompleted() );
+                    editIntent.putExtra("EDIT_TASK_COLOR_SPINNER_POSITION", t.getColorPosition());
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }
             });

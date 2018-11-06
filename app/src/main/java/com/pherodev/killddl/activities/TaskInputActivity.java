@@ -113,6 +113,7 @@ public class TaskInputActivity extends AppCompatActivity {
             titleEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_TITLE"));
             descriptionEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_DESCRIPTION"));
             completedChechBox.setChecked( extrasIntent.getExtras().getBoolean("EDIT_TASK_COMPLETED"));
+            colorSpinner.setSelection(extrasIntent.getExtras().getInt("EDIT_TASK_COLOR_SPINNER_POSITION"));
         }
 
         if (deadlineTextView != null)
@@ -164,7 +165,6 @@ public class TaskInputActivity extends AppCompatActivity {
                     String description = descriptionEditText.getText().toString();
                     String deadlineText = deadline.toString();
                     Boolean isCompleted = completedChechBox.isChecked();
-
                     int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
                     System.out.println("COLOR SELECTED = " + color);
 
@@ -172,9 +172,9 @@ public class TaskInputActivity extends AppCompatActivity {
 
                     if (editMode) {
                         long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
-                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted);
+                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color);
                     } else
-                        database.createTask(categoryId, title, description, deadlineText, isCompleted);
+                        database.createTask(categoryId, title, description, deadlineText, isCompleted, color);
                     database.close();
 
                     // Restart the updated Tasks intent
