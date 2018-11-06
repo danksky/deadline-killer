@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     /*
         This class outlines the Category table schema, and operations
@@ -129,24 +129,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long createTask(long categoryId, String title, String description , String deadline){
+    public long createTask(long categoryId, String title, String description , String deadline, boolean isComplete){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
         values.put(Task.COLUMN_DESCRIPTION, description);
         values.put(Task.COLUMN_DUE_DATE, deadline);
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
+        values.put(Task.COLUMN_IS_COMPLETED, isComplete);
 
         return getWritableDatabase().insert(Task.TABLE_NAME, null, values);
 
     }
 
-    public void updateTask(long taskId, long categoryId, String title, String description , String deadline ){
+    public void updateTask(long taskId, long categoryId, String title, String description , String deadline, Boolean isCompleted ){
 
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
         values.put(Task.COLUMN_DESCRIPTION, description);
         values.put(Task.COLUMN_DUE_DATE, deadline);
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
+        int completedInt = isCompleted? 1 : 0;
+        values.put(Task.COLUMN_IS_COMPLETED, completedInt);
         String[] args = {Long.toString(taskId)};
 
         getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args);

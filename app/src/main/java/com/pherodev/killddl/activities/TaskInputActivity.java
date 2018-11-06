@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -33,6 +34,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private DatePickerDialog.OnDateSetListener taskInputDateSetListener;
     private TextView deadlineTextView;
+    private CheckBox completedChechBox;
 
     private Spinner colorSpinner;
     private List<String> colors;
@@ -75,6 +77,8 @@ public class TaskInputActivity extends AppCompatActivity {
         deadlineTextView = (TextView) findViewById(R.id.text_view_input_task_deadline);
         titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
         descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
+        completedChechBox = (CheckBox) findViewById(R.id.check_box_input_task_completed);
+
 
         // Color spinner stuff
         colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
@@ -108,6 +112,7 @@ public class TaskInputActivity extends AppCompatActivity {
             deadlineTextView.setText(date.toString());
             titleEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_TITLE"));
             descriptionEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_DESCRIPTION"));
+            completedChechBox.setChecked( extrasIntent.getExtras().getBoolean("EDIT_TASK_COMPLETED"));
         }
 
         if (deadlineTextView != null)
@@ -134,6 +139,7 @@ public class TaskInputActivity extends AppCompatActivity {
                     dialog.show();
                 }
             });
+
         taskInputDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -157,6 +163,8 @@ public class TaskInputActivity extends AppCompatActivity {
                     String title = titleEditText.getText().toString();
                     String description = descriptionEditText.getText().toString();
                     String deadlineText = deadline.toString();
+                    Boolean isCompleted = completedChechBox.isChecked();
+
                     int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
                     System.out.println("COLOR SELECTED = " + color);
 
@@ -164,9 +172,9 @@ public class TaskInputActivity extends AppCompatActivity {
 
                     if (editMode) {
                         long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
-                        database.updateTask(taskId, categoryId, title, description, deadlineText);
+                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted);
                     } else
-                        database.createTask(categoryId, title, description, deadlineText);
+                        database.createTask(categoryId, title, description, deadlineText, isCompleted);
                     database.close();
 
                     // Restart the updated Tasks intent

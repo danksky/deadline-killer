@@ -121,9 +121,11 @@ public class TasksActivity extends AppCompatActivity {
                 String deadlineString = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
                 DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
                 Date deadline = format.parse(deadlineString);
+                boolean isComplete = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_IS_COMPLETED)) != 0) ? true : false;
 
                 // Initialize new task and add to tasks ArrayList
-                tasks.add(new Task(id, categoryId, title, description, deadline));
+                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete));
+
                 System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
                         " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline);
             }

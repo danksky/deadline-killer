@@ -2,6 +2,7 @@ package com.pherodev.killddl.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.TaskInputActivity;
 import com.pherodev.killddl.activities.TasksActivity;
 import com.pherodev.killddl.models.Task;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -42,7 +45,16 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     public void onBindViewHolder(TasksViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.taskTitle.setText(tasks.get(position).getTitle());
+        TextView title = holder.taskTitle;
+
+        title.setText(tasks.get(position).getTitle());
+        // if task is completed strike through format
+        if(tasks.get(position).getIsCompleted() ){
+            title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }else{
+            title.setPaintFlags(title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
         holder.taskDeadline.setText(tasks.get(position).getDeadline().toString());
         holder.taskDescription.setText(tasks.get(position).getDescription());
     }
@@ -97,6 +109,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra("EDIT_TASK_DEADLINE", t.getDeadline().getTime());
                     editIntent.putExtra("EDIT_TASK_TITLE", t.getTitle());
                     editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
+                    editIntent.putExtra("EDIT_TASK_COMPLETED", t.getIsCompleted() );
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }
             });

@@ -22,12 +22,13 @@ public class Task implements Parcelable {
     private boolean isCompleted;
     private long listPosition;
 
-    public Task (long id, long categoryId, String title, String description, Date deadline) {
+    public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted) {
         this.id = id;
         this.categoryId = categoryId;
         this.title = title;
         this.description = description;
         this.deadline = deadline;
+        this.isCompleted = isCompleted;
     }
 
     protected Task(Parcel in) {
@@ -80,6 +81,14 @@ public class Task implements Parcelable {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    public void complete(boolean isCompleted){
+        this.isCompleted = isCompleted;
+    }
+
+    public boolean getIsCompleted(){
+        return isCompleted;
     }
 
     @Override
