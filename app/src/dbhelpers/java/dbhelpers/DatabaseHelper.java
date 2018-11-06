@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     /*
         This class outlines the Category table schema, and operations
@@ -55,11 +55,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CATEGORY_ID = "category_id";
         public static final String COLUMN_COLOR = "color";
         public static final String COLUMN_IS_COMPLETED = "is_completed";
-        public static final String COLUMN_LIST_POSITION = "list_position";
-
+        public static final String COLUMN_PRIORITY = "priority";
 
         // TODO - Some sort of list position like https://stackoverflow.com/questions/36474658/save-reordered-recyclerview-in-sqlite
-
 
         // These strings are SQL code to create and drop the Deadline table
         public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -79,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // is completed?
                 COLUMN_IS_COMPLETED + " INTEGER DEFAULT 0, " +
                 // list position
-                COLUMN_LIST_POSITION + " INTEGER, " +
+                COLUMN_PRIORITY + " INTEGER, " +
                 // make category_id foreign key
                 "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " +
                 Category.TABLE_NAME + "("+Category._ID+")" + ");";
@@ -116,7 +114,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
-
     /*
      Custom methods added to Database helper, specific to Killddl
       */
@@ -129,7 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long createTask(long categoryId, String title, String description , String deadline, boolean isComplete, int color){
+    public long createTask(long categoryId, String title, String description , String deadline, boolean isComplete, int color, int priority){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
         values.put(Task.COLUMN_DESCRIPTION, description);
@@ -137,12 +134,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Task.COLUMN_CATEGORY_ID, categoryId);
         values.put(Task.COLUMN_IS_COMPLETED, isComplete);
         values.put(Task.COLUMN_COLOR, color);
+        values.put(Task.COLUMN_PRIORITY, priority);
 
         return getWritableDatabase().insert(Task.TABLE_NAME, null, values);
 
     }
 
-    public void updateTask(long taskId, long categoryId, String title, String description , String deadline, Boolean isCompleted, int color){
+    public void updateTask(long taskId, long categoryId, String title, String description , String deadline, Boolean isCompleted, int color, int priority){
 
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
@@ -152,6 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int completedInt = isCompleted? 1 : 0;
         values.put(Task.COLUMN_IS_COMPLETED, completedInt);
         values.put(Task.COLUMN_COLOR, color);
+        values.put(Task.COLUMN_PRIORITY, priority);
         String[] args = {Long.toString(taskId)};
 
         getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args);
@@ -160,7 +159,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public void deleteTask(Long taskId){
-
         String[] args = {Long.toString(taskId)};
         getWritableDatabase().delete(Task.TABLE_NAME, Task.WHERE_ID, args);
         return;
@@ -194,5 +192,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categoryTitle;
     }
 
-
+    public String shiftPriority(int fromPriority, long fromId, int toPriority) {
+        // increment position
+        if (toPriority > fromPriority) {
+            String shiftAllUp = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
+                    + "=" + Task.COLUMN_PRIORITY + "-1 WHERE " + Task.COLUMN_PRIORITY + ">" + fromPriority + " AND " + Task.COLUMN_PRIORITY + "<=" + toPriority +";";
+            // move other items
+            getWritableDatabase().execSQL(shiftAllUp);
+            // move
+            String moveOneDown = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
+                    + "=" + toPriority + " WHERE " + Task.COLUMN_PRIORITY + "=" + fromPriority +" AND " + BaseColumns._ID + "=" + fromId + ";";
+            getWritableDatabase().execSQL(moveOneDown);
+            return shiftAllUp + "\n" + moveOneDown;
+        }
+        // decrement position
+        else if (toPriority < fromPriority) {
+            String shiftAllDown = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
+                    + "=" + Task.COLUMN_PRIORITY + "+1 WHERE " + Task.COLUMN_PRIORITY + ">=" + toPriority + " AND " + Task.COLUMN_PRIORITY + "<" + fromPriority +";";
+            // move other items
+            getWritableDatabase().execSQL(shiftAllDown);
+            // move
+            String moveOneUp = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
+                    + "=" + toPriority + " WHERE " + Task.COLUMN_PRIORITY + "=" + fromPriority +" AND " + BaseColumns._ID + "=" + fromId + ";";
+            getWritableDatabase().execSQL(moveOneUp);
+            return shiftAllDown + "\n" + moveOneUp;
+        }
+        return "";
+    }
 }

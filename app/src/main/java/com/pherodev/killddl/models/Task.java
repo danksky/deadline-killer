@@ -20,9 +20,9 @@ public class Task implements Parcelable {
 
     private int color;
     private boolean isCompleted;
-    private long listPosition;
+    private int priority;
 
-    public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted, int color) {
+    public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted, int color, int priority) {
         this.id = id;
         this.categoryId = categoryId;
         this.title = title;
@@ -30,6 +30,7 @@ public class Task implements Parcelable {
         this.deadline = deadline;
         this.isCompleted = isCompleted;
         this.color = color;
+        this.priority = priority;
     }
 
     protected Task(Parcel in) {
@@ -75,13 +76,20 @@ public class Task implements Parcelable {
 
     public void setDescription(String description) { this.description = description; }
 
-
     public Date getDeadline() {
         return deadline;
     }
 
     public int getColor() {
         return color;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public int getColorPosition() {

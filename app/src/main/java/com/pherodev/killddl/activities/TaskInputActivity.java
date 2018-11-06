@@ -39,7 +39,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private Spinner colorSpinner;
     private List<String> colors;
 
-
+    private int taskCount;
     private long categoryId;
 
     private boolean editMode = false;
@@ -55,9 +55,13 @@ public class TaskInputActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final Intent extrasIntent = getIntent();
+        // TODO: Change this to EDIT_MODE true/false
         if (extrasIntent != null
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
+            taskCount = new Integer(extrasIntent.getExtras().getInt("TASK_COUNT"));
+            System.out.println("Task count: " + taskCount);
+            // TODO: Move this to the final entry method
             categoryId = new Long(extrasIntent.getExtras().getLong("CATEGORY_ID"));
             System.out.println("In TaskInputActivity, have categoryId: " + categoryId);
             Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
@@ -67,10 +71,14 @@ public class TaskInputActivity extends AppCompatActivity {
                 && extrasIntent.getExtras() != null
                 && extrasIntent.getExtras().containsKey("EDIT_TASK_MODE")) {
             editMode = extrasIntent.getExtras().getBoolean("EDIT_TASK_MODE");
+            System.out.println("Prev priority " + extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY"));
             Toast.makeText(getApplicationContext(), "Edit mode enabled.", Toast.LENGTH_LONG).show();
         }
-        else
+        else {
             Toast.makeText(getApplicationContext(), "No bundle.", Toast.LENGTH_LONG).show();
+            setResult(TasksActivity.RESULT_CANCELED);
+            finish();
+        }
 
         // Initialize
         completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
@@ -172,9 +180,10 @@ public class TaskInputActivity extends AppCompatActivity {
 
                     if (editMode) {
                         long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
-                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color);
+                        int priority = extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY");
+                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
                     } else
-                        database.createTask(categoryId, title, description, deadlineText, isCompleted, color);
+                        database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
                     database.close();
 
                     // Restart the updated Tasks intent

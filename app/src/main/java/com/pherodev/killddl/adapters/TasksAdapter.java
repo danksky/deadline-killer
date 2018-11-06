@@ -21,6 +21,7 @@ import com.pherodev.killddl.models.Task;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import dbhelpers.DatabaseHelper;
 
@@ -77,6 +78,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        System.out.println(dbHelper.shiftPriority(
+                tasks.get(fromPosition).getPriority(),
+                tasks.get(fromPosition).getId(),
+                tasks.get(toPosition)  .getPriority()));
+        // Swap runtime priorities and adapter positions
+        int tempPriority = tasks.get(fromPosition).getPriority();
+        tasks.get(fromPosition).setPriority(tasks.get(toPosition).getPriority());
+        tasks.get(toPosition).setPriority(tempPriority);
+        Collections.swap(tasks, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
         return false;
     }
 
@@ -119,6 +131,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
                     editIntent.putExtra("EDIT_TASK_COMPLETED", t.getIsCompleted() );
                     editIntent.putExtra("EDIT_TASK_COLOR_SPINNER_POSITION", t.getColorPosition());
+                    editIntent.putExtra("EDIT_TASK_PRIORITY", t.getPriority());
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }
             });

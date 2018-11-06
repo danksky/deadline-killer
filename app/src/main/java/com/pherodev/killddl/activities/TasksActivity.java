@@ -3,10 +3,8 @@ package com.pherodev.killddl.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,18 +14,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
-import com.pherodev.killddl.adapters.CategoryAdapter;
+import com.pherodev.killddl.adapters.PriorityComparator;
 import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.gestures.SimpleItemTouchHelperCallback;
-import com.pherodev.killddl.models.Category;
 import com.pherodev.killddl.models.Task;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Locale;
 
 import dbhelpers.DatabaseHelper;
 
@@ -87,6 +85,7 @@ public class TasksActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TaskInputActivity.class);
                 intent.putExtra("CATEGORY_ID", categoryId);
+                intent.putExtra("TASK_COUNT", tasks.size());
                 startActivityForResult(intent, TASK_CREATE_REQUEST);
             }
         });
@@ -133,12 +132,13 @@ public class TasksActivity extends AppCompatActivity {
                 Date deadline = format.parse(deadlineString);
                 boolean isComplete = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_IS_COMPLETED)) != 0) ? true : false;
                 int color = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_COLOR));
+                int priority = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_PRIORITY));
 
                 // Initialize new task and add to tasks ArrayList
-                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color));
+                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color, priority));
 
                 System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
-                        " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color);
+                        " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color + " PRIORITY " + priority);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -146,9 +146,9 @@ public class TasksActivity extends AppCompatActivity {
         } finally {
             cursor.close();
             database.close();
+            // TODO: Implement some default sort type.
+            Collections.sort(tasks, new PriorityComparator());
         }
-
-
 
     }
 
@@ -164,4 +164,6 @@ public class TasksActivity extends AppCompatActivity {
     public void programaticallyDeleteLastTask() {
         deleteTaskAtPosition(tasks.size()-1);
     }
+
+
 }
