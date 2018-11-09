@@ -3,15 +3,12 @@ package com.pherodev.killddl.activities;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
+import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.receivers.NotificationPublisher;
 
 import java.util.ArrayList;
@@ -45,7 +43,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private DatePickerDialog.OnDateSetListener taskInputDateSetListener;
     private TextView deadlineTextView;
-    private CheckBox completedChechBox;
+    private CheckBox completedCheckBox;
 
     private Spinner colorSpinner;
     private List<String> colors;
@@ -130,57 +128,52 @@ public class TaskInputActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
-        // TODO: Change this to EDIT_MODE true/false
-        if (extras != null && extras.containsKey("CATEGORY_ID")) {
-            taskCount = new Integer(extras.getInt("TASK_COUNT"));
-            System.out.println("Task count: " + taskCount);
-            // TODO: Move this to the final entry method
-            categoryId = new Long(extras.getLong("CATEGORY_ID"));
-            System.out.println("In TaskInputActivity, have categoryId: " + categoryId);
-            Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
-                    categoryId, Toast.LENGTH_LONG).show();
-        } else if (extras != null && extras.containsKey("EDIT_TASK_MODE")) {
-            editMode = extras.getBoolean("EDIT_TASK_MODE");
-            System.out.println("Prev priority " + extras.getInt("EDIT_TASK_PRIORITY"));
-            Toast.makeText(getApplicationContext(), "Edit mode enabled.", Toast.LENGTH_LONG).show();
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "No bundle.", Toast.LENGTH_LONG).show();
+
+        if (extras != null &&
+                extras.containsKey(TasksAdapter.BUNDLE_EDIT_TASK_MODE_KEY) &&
+                extras.containsKey(CategoryActivity.CATEGORY_ID_KEY)) {
+            editMode = (extras.getBoolean(TasksAdapter.BUNDLE_EDIT_TASK_MODE_KEY));
+            categoryId = new Long(extras.getLong(CategoryActivity.CATEGORY_ID_KEY));
+
+            // Initialize
+            completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
+            deadlineTextView = (TextView) findViewById(R.id.text_view_input_task_deadline);
+            titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
+            descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
+            completedCheckBox = (CheckBox) findViewById(R.id.check_box_input_task_completed);
+
+            // Color spinner stuff
+            colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
+            colors = new ArrayList<String>();
+            colors.add("Red");
+            colors.add("Blue");
+            colors.add("Green");
+            colors.add("Purple");
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, colors);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            colorSpinner.setAdapter(dataAdapter);
+
+            // Edit mode - populate fields
+            if (editMode) {
+                categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
+                Date date = new Date();
+                date.setTime(extras.getLong(TasksAdapter.BUNDLE_EDIT_TASK_DEADLINE_KEY));
+                deadline = date;
+                deadlineTextView.setText(date.toString());
+                titleEditText.setText(extras.getString(TasksAdapter.BUNDLE_EDIT_TASK_TITLE_KEY));
+                descriptionEditText.setText(extras.getString(TasksAdapter.BUNDLE_EDIT_TASK_DESCRIPTION_KEY));
+                completedCheckBox.setChecked(extras.getBoolean(TasksAdapter.BUNDLE_EDIT_TASK_COMPLETED_KEY));
+                colorSpinner.setSelection(extras.getInt(TasksAdapter.BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY));
+            } else {
+                // TODO: Move this to the final entry method
+                taskCount = new Integer(extras.getInt("TASK_COUNT"));
+            }
+        } else {
+            System.err.println("ERROR: Starting " + this.getClass().getName());
+
+            Toast.makeText(getApplicationContext(), "ERROR: Starting " + this.getClass().getName(), Toast.LENGTH_LONG).show();
             setResult(TasksActivity.RESULT_CANCELED);
             finish();
-        }
-
-        // Initialize
-        completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_task_complete);
-        deadlineTextView = (TextView) findViewById(R.id.text_view_input_task_deadline);
-        titleEditText = (EditText) findViewById(R.id.edit_text_input_task_title);
-        descriptionEditText = (EditText) findViewById(R.id.edit_text_input_task_description);
-        completedChechBox = (CheckBox) findViewById(R.id.check_box_input_task_completed);
-
-
-        // Color spinner stuff
-        colorSpinner = (Spinner) findViewById(R.id.spinner_input_task_color);
-        colors = new ArrayList<String>();
-        colors.add("Red");
-        colors.add("Blue");
-        colors.add("Green");
-        colors.add("Purple");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, colors);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        colorSpinner.setAdapter(dataAdapter);
-
-        // Edit mode stuff
-        if (editMode) {
-            // Populate accordingly
-            categoryId = extras.getLong("EDIT_TASK_CATEGORY_ID");
-            Date date = new Date();
-            date.setTime(extras.getLong("EDIT_TASK_DEADLINE"));
-            deadline = date;
-            deadlineTextView.setText(date.toString());
-            titleEditText.setText(extras.getString("EDIT_TASK_TITLE"));
-            descriptionEditText.setText(extras.getString("EDIT_TASK_DESCRIPTION"));
-            completedChechBox.setChecked(extras.getBoolean("EDIT_TASK_COMPLETED"));
-            colorSpinner.setSelection(extras.getInt("EDIT_TASK_COLOR_SPINNER_POSITION"));
         }
     }
 
@@ -190,7 +183,7 @@ public class TaskInputActivity extends AppCompatActivity {
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String deadlineText = deadline.toString();
-        Boolean isCompleted = completedChechBox.isChecked();
+        Boolean isCompleted = completedCheckBox.isChecked();
         int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
         System.out.println("COLOR SELECTED = " + color);
 

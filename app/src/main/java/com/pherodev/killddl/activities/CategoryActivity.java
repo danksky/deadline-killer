@@ -41,29 +41,15 @@ public class CategoryActivity extends AppCompatActivity implements OnStartDragLi
     public static final int CATEGORY_CREATE_REQUEST = 1;
     public static final int CATEGORY_EDIT_REQUEST = 2;
 
+    public static final String CATEGORY_ID_KEY = "CATEGORY_ID";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Deadline Categories");
         setContentView(R.layout.activity_category);
+        initializeUI();
 
-        setTitle("Category");
-        categories = new ArrayList<Category>();
-        loadCategoriesFromDB();
-
-        categoriesRecyclerView = (RecyclerView)findViewById(R.id.recycler_view_categories);
-        categoriesRecyclerView.setHasFixedSize(true);
-
-        categoriesLayoutManager = new LinearLayoutManager(this);
-        categoriesRecyclerView.setLayoutManager(categoriesLayoutManager);
-        categoriesAdapter = new CategoryAdapter(categories);
-        categoriesRecyclerView.setAdapter(categoriesAdapter);
-        callback = new SimpleItemTouchHelperCallback(categoriesAdapter);
-        itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(categoriesRecyclerView);
-        loadCategoriesFromDB();
-
-        createCategoryFloatingActionButton = findViewById(R.id.fab_create_category);
+        // Setup event handlers
         createCategoryFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,6 +76,25 @@ public class CategoryActivity extends AppCompatActivity implements OnStartDragLi
                 categoriesRecyclerView.getAdapter().notifyDataSetChanged();
                 return;
         }
+    }
+
+    private void initializeUI() {
+        setTitle("Category");
+        categories = new ArrayList<Category>();
+        loadCategoriesFromDB();
+
+        categoriesRecyclerView = (RecyclerView)findViewById(R.id.recycler_view_categories);
+        categoriesRecyclerView.setHasFixedSize(true);
+
+        categoriesLayoutManager = new LinearLayoutManager(this);
+        categoriesRecyclerView.setLayoutManager(categoriesLayoutManager);
+        categoriesAdapter = new CategoryAdapter(categories);
+        categoriesRecyclerView.setAdapter(categoriesAdapter);
+        callback = new SimpleItemTouchHelperCallback(categoriesAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(categoriesRecyclerView);
+        createCategoryFloatingActionButton = findViewById(R.id.fab_create_category);
+        loadCategoriesFromDB();
     }
 
     private void loadCategoriesFromDB() {

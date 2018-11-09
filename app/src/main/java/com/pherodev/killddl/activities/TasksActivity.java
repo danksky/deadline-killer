@@ -24,7 +24,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 
 import dbhelpers.DatabaseHelper;
@@ -46,6 +45,8 @@ public class TasksActivity extends AppCompatActivity {
     public static final int TASK_CREATE_REQUEST = 1;
     public static final int TASK_EDIT_REQUEST = 2;
 
+    public static final String NEWEST_TASK_COUNT_KEY = "TASK_COUNT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,38 +54,17 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
-        if (extras != null && extras.containsKey("CATEGORY_ID")) {
-            categoryId = extras.getLong("CATEGORY_ID");
-            loadTasksFromDB();
-            setTitle(categoryTitle + " Deadlines");
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "did not get categoryId", Toast.LENGTH_SHORT);
-            setResult(CategoryActivity.RESULT_CANCELED);
-            finish();
-        }
+        initializeUI();
 
-        // Setup RecyclerView, LayoutManager, and Adapter
-        tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
-        tasksRecyclerView.setHasFixedSize(true);
-        tasksLayoutManager = new LinearLayoutManager(this);
-        tasksAdapter = new TasksAdapter(tasks);
-        tasksRecyclerView.setLayoutManager(tasksLayoutManager);
-        tasksRecyclerView.setAdapter(tasksAdapter);
-        callback = new SimpleItemTouchHelperCallback(tasksAdapter);
-        itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
-
-
-        createTaskFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_create_task);
+        // Setup event listeners
         createTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), TaskInputActivity.class);
-                intent.putExtra("CATEGORY_ID", categoryId);
-                intent.putExtra("TASK_COUNT", tasks.size());
-                startActivityForResult(intent, TASK_CREATE_REQUEST);
+                Intent launchInputIntent = new Intent(getApplicationContext(), TaskInputActivity.class);
+                launchInputIntent.putExtra(CategoryActivity.CATEGORY_ID_KEY, categoryId);
+                launchInputIntent.putExtra(NEWEST_TASK_COUNT_KEY, tasks.size());
+                launchInputIntent.putExtra(TasksAdapter.BUNDLE_EDIT_TASK_MODE_KEY, false);
+                startActivityForResult(launchInputIntent, TASK_CREATE_REQUEST);
             }
         });
     }
@@ -106,6 +86,33 @@ public class TasksActivity extends AppCompatActivity {
                 tasksRecyclerView.getAdapter().notifyDataSetChanged();
                 return;
         }
+    }
+
+    private void initializeUI() {
+        Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
+        if (extras != null && extras.containsKey(CategoryActivity.CATEGORY_ID_KEY)) {
+            categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
+            loadTasksFromDB();
+            setTitle(categoryTitle + " Deadlines");
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "ERROR: Starting " + this.getClass().getName(), Toast.LENGTH_SHORT);
+            setResult(CategoryActivity.RESULT_CANCELED);
+            finish();
+        }
+
+        // Setup RecyclerView, LayoutManager, and Adapter
+        tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
+        tasksRecyclerView.setHasFixedSize(true);
+        tasksLayoutManager = new LinearLayoutManager(this);
+        tasksAdapter = new TasksAdapter(tasks);
+        tasksRecyclerView.setLayoutManager(tasksLayoutManager);
+        tasksRecyclerView.setAdapter(tasksAdapter);
+        callback = new SimpleItemTouchHelperCallback(tasksAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
+        // Setup FAB
+        createTaskFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_create_task);
     }
 
     // TODO: Move this Cursor magic to DatabaseHelper

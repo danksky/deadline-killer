@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,12 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pherodev.killddl.R;
+import com.pherodev.killddl.activities.CategoryActivity;
 import com.pherodev.killddl.activities.TaskInputActivity;
 import com.pherodev.killddl.activities.TasksActivity;
 import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Task;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +27,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     public ArrayList<Task> tasks;
     private Context context;
+
+    public static final String BUNDLE_EDIT_TASK_MODE_KEY = "EDIT_TASK_MODE";
+    public static final String BUNDLE_EDIT_TASK_ID_KEY = "EDIT_TASK_ID";
+    public static final String BUNDLE_EDIT_TASK_DEADLINE_KEY = "EDIT_TASK_DEADLINE";
+    public static final String BUNDLE_EDIT_TASK_TITLE_KEY = "EDIT_TASK_TITLE";
+    public static final String BUNDLE_EDIT_TASK_DESCRIPTION_KEY = "EDIT_TASK_DESCRIPTION";
+    public static final String BUNDLE_EDIT_TASK_COMPLETED_KEY = "EDIT_TASK_COMPLETED";
+    public static final String BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY = "EDIT_TASK_COLOR_SPINNER_POSITION";
+    public static final String BUNDLE_EDIT_TASK_PRIORITY_KEY = "EDIT_TASK_PRIORITY";
 
     public TasksAdapter(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -123,15 +130,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     Intent editIntent = new Intent(view.getContext(), TaskInputActivity.class);
                     int position = getLayoutPosition();
                     Task t = tasks.get(position);
-                    editIntent.putExtra("EDIT_TASK_MODE", true);
-                    editIntent.putExtra("EDIT_TASK_ID", t.getId());
-                    editIntent.putExtra("EDIT_TASK_CATEGORY_ID", t.getCategoryId());
-                    editIntent.putExtra("EDIT_TASK_DEADLINE", t.getDeadline().getTime());
-                    editIntent.putExtra("EDIT_TASK_TITLE", t.getTitle());
-                    editIntent.putExtra("EDIT_TASK_DESCRIPTION", t.getDescription());
-                    editIntent.putExtra("EDIT_TASK_COMPLETED", t.getIsCompleted() );
-                    editIntent.putExtra("EDIT_TASK_COLOR_SPINNER_POSITION", t.getColorPosition());
-                    editIntent.putExtra("EDIT_TASK_PRIORITY", t.getPriority());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_MODE_KEY, true);
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_ID_KEY, t.getId());
+                    editIntent.putExtra(CategoryActivity.CATEGORY_ID_KEY, t.getCategoryId());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_DEADLINE_KEY, t.getDeadline().getTime());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_TITLE_KEY, t.getTitle());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_DESCRIPTION_KEY, t.getDescription());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_COMPLETED_KEY, t.getIsCompleted() );
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY, t.getColorPosition());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_PRIORITY_KEY, t.getPriority());
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }
             });

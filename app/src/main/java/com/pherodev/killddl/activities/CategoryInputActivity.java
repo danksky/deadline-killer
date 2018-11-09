@@ -28,13 +28,8 @@ public class CategoryInputActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setTitle("Add a new Category");
         setContentView(R.layout.activity_category_input);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_category_complete);
-        titleEditText = (EditText) findViewById(R.id.edit_text_input_category_title);
+        initializeUI();
 
         if (titleEditText != null) {
             titleEditText.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +56,15 @@ public class CategoryInputActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void initializeUI() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        setTitle("Add a new Category");
+        completeInputFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_input_category_complete);
+        titleEditText = (EditText) findViewById(R.id.edit_text_input_category_title);
     }
 
     public String verify() {
