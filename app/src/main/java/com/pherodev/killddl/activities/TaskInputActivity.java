@@ -165,8 +165,8 @@ public class TaskInputActivity extends AppCompatActivity {
                 completedCheckBox.setChecked(extras.getBoolean(TasksAdapter.BUNDLE_EDIT_TASK_COMPLETED_KEY));
                 colorSpinner.setSelection(extras.getInt(TasksAdapter.BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY));
             } else {
-                // TODO: Move this to the final entry method
-                taskCount = new Integer(extras.getInt("TASK_COUNT"));
+                // Functions as the newly entered Task's priority
+                taskCount = new Integer(extras.getInt(TasksActivity.NEWEST_TASK_COUNT_KEY));
             }
         } else {
             System.err.println("ERROR: Starting " + this.getClass().getName());
@@ -190,8 +190,8 @@ public class TaskInputActivity extends AppCompatActivity {
         DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
 
         if (editMode) {
-            long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
-            int priority = extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY");
+            long taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
+            int priority = extrasIntent.getExtras().getInt(TasksAdapter.BUNDLE_EDIT_TASK_PRIORITY_KEY);
             database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
         } else
             database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
