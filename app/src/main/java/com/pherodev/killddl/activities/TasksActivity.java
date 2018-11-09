@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.PriorityComparator;
 import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.gestures.SimpleItemTouchHelperCallback;
 import com.pherodev.killddl.models.Task;
 
@@ -25,8 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-
-import dbhelpers.DatabaseHelper;
 
 public class TasksActivity extends AppCompatActivity {
 

@@ -27,14 +27,13 @@ import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.receivers.NotificationPublisher;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import dbhelpers.DatabaseHelper;
 
 public class TaskInputActivity extends AppCompatActivity {
 

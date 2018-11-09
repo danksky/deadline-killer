@@ -1,8 +1,5 @@
 package com.pherodev.killddl.activities;
 
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,7 +11,7 @@ import android.widget.Toast;
 
 import com.pherodev.killddl.R;
 
-import dbhelpers.DatabaseHelper;
+import com.pherodev.killddl.database.DatabaseHelper;
 
 public class CategoryInputActivity extends AppCompatActivity {
 

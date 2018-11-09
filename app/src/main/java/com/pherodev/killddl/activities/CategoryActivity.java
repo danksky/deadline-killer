@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,14 +16,12 @@ import android.widget.Toast;
 import com.pherodev.killddl.R;
 //import com.pherodev.killddl.databinding.ActivityMainBinding;
 import com.pherodev.killddl.adapters.CategoryAdapter;
-import com.pherodev.killddl.adapters.TasksAdapter;
+import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.gestures.OnStartDragListener;
 import com.pherodev.killddl.gestures.SimpleItemTouchHelperCallback;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
-
-import dbhelpers.DatabaseHelper;
 
 public class CategoryActivity extends AppCompatActivity implements OnStartDragListener {
 

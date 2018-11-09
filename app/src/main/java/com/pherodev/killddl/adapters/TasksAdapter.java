@@ -15,13 +15,12 @@ import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.CategoryActivity;
 import com.pherodev.killddl.activities.TaskInputActivity;
 import com.pherodev.killddl.activities.TasksActivity;
+import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import dbhelpers.DatabaseHelper;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> implements ItemTouchHelperAdapter {
 

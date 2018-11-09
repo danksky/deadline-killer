@@ -12,7 +12,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 
-import dbhelpers.DatabaseHelper;
+import com.pherodev.killddl.dbhelpers.DatabaseHelper;
 
 import static junit.framework.Assert.assertEquals;
 

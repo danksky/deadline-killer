@@ -11,13 +11,12 @@ import android.widget.TextView;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.TasksActivity;
+import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Category;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import dbhelpers.DatabaseHelper;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> implements ItemTouchHelperAdapter {
 
