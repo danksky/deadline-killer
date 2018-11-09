@@ -6,12 +6,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
     private static final int DATABASE_VERSION = 5;
+
+    private Context context;
 
     /*
         This class outlines the Category table schema, and operations
@@ -50,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String COLUMN_COLOR = "color";
         public static final String COLUMN_IS_COMPLETED = "is_completed";
         public static final String COLUMN_PRIORITY = "priority";
+
 
         // TODO - Some sort of list position like https://stackoverflow.com/questions/36474658/save-reordered-recyclerview-in-sqlite
 
@@ -93,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Database Creation and Updating
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -184,6 +194,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return categoryTitle;
+    }
+
+    public com.pherodev.killddl.models.Task getTaskById(long taskId) {
+        com.pherodev.killddl.models.Task task = null;
+
+        String[] args = {Long.toString(taskId)};
+        Cursor cursor = getWritableDatabase().rawQuery(Task.SELECT_TASK_BY_ID, args);
+        try {
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+                long categoryId = cursor.getLong(cursor.getColumnIndexOrThrow(Task.COLUMN_CATEGORY_ID));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(Task.COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow(Task.COLUMN_DESCRIPTION));
+                String deadlineString = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_DUE_DATE));
+                DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+                Date deadline = format.parse(deadlineString);
+                boolean isComplete = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_IS_COMPLETED)) != 0) ? true : false;
+                int color = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_COLOR));
+                int priority = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_PRIORITY));
+                task = new com.pherodev.killddl.models.Task(id, categoryId, title, description, deadline, isComplete, color, priority);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }finally {
+            cursor.close();
+        }
+        return task;
     }
 
     public String shiftPriority(int fromPriority, long fromId, int toPriority) {

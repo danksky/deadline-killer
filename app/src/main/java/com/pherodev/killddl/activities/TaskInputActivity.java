@@ -1,18 +1,11 @@
 package com.pherodev.killddl.activities;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -28,8 +21,7 @@ import android.widget.Toast;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.database.DatabaseHelper;
-import com.pherodev.killddl.models.Task;
-import com.pherodev.killddl.receivers.NotificationPublisher;
+import com.pherodev.killddl.notifications.NotificationsHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +44,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private long categoryId;
 
     private boolean editMode = false;
-    private Task previousTask;
+    private Date previousDeadline;
 
     private Date deadline;
 
@@ -160,11 +152,13 @@ public class TaskInputActivity extends AppCompatActivity {
                 Date date = new Date();
                 date.setTime(extras.getLong(TasksAdapter.BUNDLE_EDIT_TASK_DEADLINE_KEY));
                 deadline = date;
+                previousDeadline = deadline;
                 deadlineTextView.setText(date.toString());
                 titleEditText.setText(extras.getString(TasksAdapter.BUNDLE_EDIT_TASK_TITLE_KEY));
                 descriptionEditText.setText(extras.getString(TasksAdapter.BUNDLE_EDIT_TASK_DESCRIPTION_KEY));
                 completedCheckBox.setChecked(extras.getBoolean(TasksAdapter.BUNDLE_EDIT_TASK_COMPLETED_KEY));
                 colorSpinner.setSelection(extras.getInt(TasksAdapter.BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY));
+
             } else {
                 // Functions as the newly entered Task's priority
                 taskCount = new Integer(extras.getInt(TasksActivity.NEWEST_TASK_COUNT_KEY));
@@ -185,7 +179,8 @@ public class TaskInputActivity extends AppCompatActivity {
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String deadlineText = deadline.toString();
-        Boolean isCompleted = completedCheckBox.isChecked();
+        boolean isCompleted = completedCheckBox.isChecked();
+        boolean dateChanged = (previousDeadline == null) || !previousDeadline.equals(deadline);
         int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
         System.out.println("COLOR SELECTED = " + color);
 
@@ -197,61 +192,17 @@ public class TaskInputActivity extends AppCompatActivity {
             taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
             int priority = extrasIntent.getExtras().getInt(TasksAdapter.BUNDLE_EDIT_TASK_PRIORITY_KEY);
             database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
-        } else
-            taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
+        } else taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
         database.close();
 
         // Schedule / modify notification
-        if (taskId != -1)
-            scheduleNotification(getApplicationContext(), title, 1000, (int) taskId);
+        if (taskId != -1 && dateChanged) NotificationsHelper.scheduleTaskNotification(getApplicationContext(), 1000, (int) taskId);
 
         // Restart the updated Tasks intent
-        if (editMode)
-            setResult(TasksActivity.TASK_EDIT_REQUEST);
-        else
-            setResult(TasksActivity.TASK_CREATE_REQUEST);
+        if (editMode) setResult(TasksActivity.TASK_EDIT_REQUEST);
+        else setResult(TasksActivity.TASK_CREATE_REQUEST);
 
         finish();
-    }
-
-    /* TODO: Write logic to update notification according to deadline.
-        - Programmatically populate notification field at time of reminder.
-        - That means create unique (re-constructable) identifiers tags for each task
-            - Currently, the time is being used as a unique int
-            - That means remove the title and content from the builder below
-        - In general move the building from below (it make it harder to replicate to cancel)
-            - to the NotificationPublisher
-        - That means passing something that cannot change about the task when editing.
-            - There's no need to cancel if you're creating a Task for the first time.
-    */
-
-    private void scheduleNotification(Context context, String title, long delay, int notificationId) {
-
-        Intent intent = new Intent(context, CategoryActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent launchIntent = PendingIntent.getActivity(context, notificationId, intent, 0);
-
-        NotificationCompat.Builder notificationbuilder = new NotificationCompat.Builder(getApplicationContext())
-                .setContentTitle(title)
-                .setContentText(title + " is due.")
-                .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-//                .setLargeIcon(((BitmapDrawable) getApplicationContext().getResources().getDrawable(R.drawable.ic_launcher_foreground)).getBitmap())
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setPriority(Notification.PRIORITY_MAX)
-                .setContentIntent(launchIntent);
-
-        Notification notification = notificationbuilder.build();
-
-        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, notificationId);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
     }
 
     public String verify() {
