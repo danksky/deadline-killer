@@ -53,11 +53,9 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent extrasIntent = getIntent();
-        if (extrasIntent != null
-                && extrasIntent.getExtras() != null
-                && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
-            categoryId = extrasIntent.getExtras().getLong("CATEGORY_ID");
+        Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
+        if (extras != null && extras.containsKey("CATEGORY_ID")) {
+            categoryId = extras.getLong("CATEGORY_ID");
             loadTasksFromDB();
             setTitle(categoryTitle + " Deadlines");
         }

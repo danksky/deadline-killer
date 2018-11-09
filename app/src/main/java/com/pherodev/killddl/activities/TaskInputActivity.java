@@ -62,6 +62,8 @@ public class TaskInputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_input);
         initializeUI();
+
+        // Initialize event handlers
         colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -73,8 +75,6 @@ public class TaskInputActivity extends AppCompatActivity {
 
             }
         });
-
-        final Intent extrasIntent = getIntent();
 
         if (deadlineTextView != null)
             deadlineTextView.setOnClickListener(new View.OnClickListener() {
@@ -119,34 +119,8 @@ public class TaskInputActivity extends AppCompatActivity {
         completeInputFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (verify().equals("OKAY")) {
-                    // Submit task to the database, and open the tasks intent again
-                    String title = titleEditText.getText().toString();
-                    String description = descriptionEditText.getText().toString();
-                    String deadlineText = deadline.toString();
-                    Boolean isCompleted = completedChechBox.isChecked();
-                    int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
-                    System.out.println("COLOR SELECTED = " + color);
-
-                    DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
-
-                    if (editMode) {
-                        long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
-                        int priority = extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY");
-                        database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
-                    } else
-                        database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
-                    database.close();
-
-                    // Restart the updated Tasks intent
-                    if (editMode)
-                        setResult(TasksActivity.TASK_EDIT_REQUEST);
-                    else
-                        setResult(TasksActivity.TASK_CREATE_REQUEST);
-
-                    scheduleNotification(getApplicationContext(), title, 1000, (int) new Date().getTime());
-                    finish();
-                }
+                if (verify().equals("OKAY"))
+                    submitTask();
             }
         });
     }
@@ -155,24 +129,19 @@ public class TaskInputActivity extends AppCompatActivity {
         setTitle("Add a new Deadline");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final Intent extrasIntent = getIntent();
+        Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
         // TODO: Change this to EDIT_MODE true/false
-        if (extrasIntent != null
-                && extrasIntent.getExtras() != null
-                && extrasIntent.getExtras().containsKey("CATEGORY_ID")) {
-            taskCount = new Integer(extrasIntent.getExtras().getInt("TASK_COUNT"));
+        if (extras != null && extras.containsKey("CATEGORY_ID")) {
+            taskCount = new Integer(extras.getInt("TASK_COUNT"));
             System.out.println("Task count: " + taskCount);
             // TODO: Move this to the final entry method
-            categoryId = new Long(extrasIntent.getExtras().getLong("CATEGORY_ID"));
+            categoryId = new Long(extras.getLong("CATEGORY_ID"));
             System.out.println("In TaskInputActivity, have categoryId: " + categoryId);
             Toast.makeText(getApplicationContext(), "Looking at tasks of CategoryId: " +
                     categoryId, Toast.LENGTH_LONG).show();
-        }
-        else if (extrasIntent != null
-                && extrasIntent.getExtras() != null
-                && extrasIntent.getExtras().containsKey("EDIT_TASK_MODE")) {
-            editMode = extrasIntent.getExtras().getBoolean("EDIT_TASK_MODE");
-            System.out.println("Prev priority " + extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY"));
+        } else if (extras != null && extras.containsKey("EDIT_TASK_MODE")) {
+            editMode = extras.getBoolean("EDIT_TASK_MODE");
+            System.out.println("Prev priority " + extras.getInt("EDIT_TASK_PRIORITY"));
             Toast.makeText(getApplicationContext(), "Edit mode enabled.", Toast.LENGTH_LONG).show();
         }
         else {
@@ -203,16 +172,46 @@ public class TaskInputActivity extends AppCompatActivity {
         // Edit mode stuff
         if (editMode) {
             // Populate accordingly
-            categoryId = extrasIntent.getExtras().getLong("EDIT_TASK_CATEGORY_ID");
+            categoryId = extras.getLong("EDIT_TASK_CATEGORY_ID");
             Date date = new Date();
-            date.setTime(extrasIntent.getExtras().getLong("EDIT_TASK_DEADLINE"));
+            date.setTime(extras.getLong("EDIT_TASK_DEADLINE"));
             deadline = date;
             deadlineTextView.setText(date.toString());
-            titleEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_TITLE"));
-            descriptionEditText.setText(extrasIntent.getExtras().getString("EDIT_TASK_DESCRIPTION"));
-            completedChechBox.setChecked( extrasIntent.getExtras().getBoolean("EDIT_TASK_COMPLETED"));
-            colorSpinner.setSelection(extrasIntent.getExtras().getInt("EDIT_TASK_COLOR_SPINNER_POSITION"));
+            titleEditText.setText(extras.getString("EDIT_TASK_TITLE"));
+            descriptionEditText.setText(extras.getString("EDIT_TASK_DESCRIPTION"));
+            completedChechBox.setChecked(extras.getBoolean("EDIT_TASK_COMPLETED"));
+            colorSpinner.setSelection(extras.getInt("EDIT_TASK_COLOR_SPINNER_POSITION"));
         }
+    }
+
+    private void submitTask() {
+        final Intent extrasIntent = getIntent();
+        // Submit task to the database, and open the tasks intent again
+        String title = titleEditText.getText().toString();
+        String description = descriptionEditText.getText().toString();
+        String deadlineText = deadline.toString();
+        Boolean isCompleted = completedChechBox.isChecked();
+        int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
+        System.out.println("COLOR SELECTED = " + color);
+
+        DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
+
+        if (editMode) {
+            long taskId = extrasIntent.getExtras().getLong("EDIT_TASK_ID");
+            int priority = extrasIntent.getExtras().getInt("EDIT_TASK_PRIORITY");
+            database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
+        } else
+            database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
+        database.close();
+
+        // Restart the updated Tasks intent
+        if (editMode)
+            setResult(TasksActivity.TASK_EDIT_REQUEST);
+        else
+            setResult(TasksActivity.TASK_CREATE_REQUEST);
+
+        scheduleNotification(getApplicationContext(), title, 1000, (int) new Date().getTime());
+        finish();
     }
 
     /* TODO: Write logic to update notification according to deadline.
