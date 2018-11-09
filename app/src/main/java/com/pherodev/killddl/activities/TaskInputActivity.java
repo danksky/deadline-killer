@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.database.DatabaseHelper;
+import com.pherodev.killddl.models.Task;
 import com.pherodev.killddl.receivers.NotificationPublisher;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class TaskInputActivity extends AppCompatActivity {
     private long categoryId;
 
     private boolean editMode = false;
+    private Task previousTask;
 
     private Date deadline;
 
@@ -176,9 +178,10 @@ public class TaskInputActivity extends AppCompatActivity {
         }
     }
 
+    // Submit task to the database, and open the tasks intent again
     private void submitTask() {
-        final Intent extrasIntent = getIntent();
-        // Submit task to the database, and open the tasks intent again
+
+        // Grab form values
         String title = titleEditText.getText().toString();
         String description = descriptionEditText.getText().toString();
         String deadlineText = deadline.toString();
@@ -186,15 +189,21 @@ public class TaskInputActivity extends AppCompatActivity {
         int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
         System.out.println("COLOR SELECTED = " + color);
 
+        // Place into DB
         DatabaseHelper database = new DatabaseHelper(TaskInputActivity.this);
-
+        final Intent extrasIntent = getIntent();
+        long taskId = -1;
         if (editMode) {
-            long taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
+            taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
             int priority = extrasIntent.getExtras().getInt(TasksAdapter.BUNDLE_EDIT_TASK_PRIORITY_KEY);
             database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
         } else
-            database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
+            taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
         database.close();
+
+        // Schedule / modify notification
+        if (taskId != -1)
+            scheduleNotification(getApplicationContext(), title, 1000, (int) taskId);
 
         // Restart the updated Tasks intent
         if (editMode)
@@ -202,7 +211,6 @@ public class TaskInputActivity extends AppCompatActivity {
         else
             setResult(TasksActivity.TASK_CREATE_REQUEST);
 
-        scheduleNotification(getApplicationContext(), title, 1000, (int) new Date().getTime());
         finish();
     }
 
@@ -217,7 +225,7 @@ public class TaskInputActivity extends AppCompatActivity {
             - There's no need to cancel if you're creating a Task for the first time.
     */
 
-    private void scheduleNotification(Context context, String title, long delay, int notificationId) {//delay is after how much time(in millis) from current time you want to schedule the notification
+    private void scheduleNotification(Context context, String title, long delay, int notificationId) {
 
         Intent intent = new Intent(context, CategoryActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
