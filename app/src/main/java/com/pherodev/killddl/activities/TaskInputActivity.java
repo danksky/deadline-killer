@@ -180,7 +180,6 @@ public class TaskInputActivity extends AppCompatActivity {
         String description = descriptionEditText.getText().toString();
         String deadlineText = deadline.toString();
         boolean isCompleted = completedCheckBox.isChecked();
-        boolean dateChanged = (previousDeadline == null) || !previousDeadline.equals(deadline);
         int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
         System.out.println("COLOR SELECTED = " + color);
 
@@ -196,6 +195,7 @@ public class TaskInputActivity extends AppCompatActivity {
         database.close();
 
         // Schedule / modify notification
+        boolean dateChanged = (previousDeadline == null) || !previousDeadline.equals(deadline);
         if (taskId != -1 && dateChanged) NotificationsHelper.scheduleTaskNotification(getApplicationContext(), 1000, (int) taskId);
 
         // Restart the updated Tasks intent
