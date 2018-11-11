@@ -14,6 +14,7 @@ import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.CategoryActivity;
 import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.models.Task;
+import com.pherodev.killddl.notifications.NotificationsHelper;
 
 
 public class NotificationPublisher extends BroadcastReceiver {
@@ -39,7 +40,7 @@ public class NotificationPublisher extends BroadcastReceiver {
                 .setContentText(task.getDescription())
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setChannelId("CHANNEL_ID")
+                .setChannelId(NotificationsHelper.CHANNEL_ID)
 //                .setLargeIcon(((BitmapDrawable) getApplicationContext().getResources().getDrawable(R.drawable.ic_launcher_foreground)).getBitmap())
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setVibrate(new long[5])

@@ -14,15 +14,18 @@ import com.pherodev.killddl.notifications.receivers.NotificationPublisher;
 public class NotificationsHelper {
 
     public static final String TASK_DEADLINE = "TASK_DEADLINE";
+    public static final String CHANNEL_NAME = "TASK_CHANNEL";
+    public static final String CHANNEL_DESCRIPTION = "TASK_CHANNEL_DESCRIPTION";
+    public static final String CHANNEL_ID = "TASK_CHANNEL_ID";
 
     private static void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "CHANNEL_NAME";
-            String description = "CHANNEL_DESCRIPTION";
+            CharSequence name = CHANNEL_NAME;
+            String description = CHANNEL_DESCRIPTION;
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
