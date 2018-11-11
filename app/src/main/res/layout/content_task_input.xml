@@ -134,5 +134,25 @@
             android:layout_centerHorizontal="true" />
 
     </android.support.constraint.ConstraintLayout>
+    <View
+        android:id="@+id/divider5_input_task"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/constraint_layout_input_completed"/>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout_input_recurring"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toBottomOf="@id/divider5_input_task">
+
+        <CheckBox
+            android:id="@+id/check_box_input_task_recurring"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:text="Recurring Task" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

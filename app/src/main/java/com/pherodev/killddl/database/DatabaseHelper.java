@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Overall Database Name and Version
     private static final String DATABASE_NAME ="KillDDL_DB";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     private Context context;
 
@@ -58,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String COLUMN_COLOR = "color";
         public static final String COLUMN_IS_COMPLETED = "is_completed";
         public static final String COLUMN_PRIORITY = "priority";
+        public static final String COLUMN_RECURRING = "recurring";
 
 
         // TODO - Some sort of list position like https://stackoverflow.com/questions/36474658/save-reordered-recyclerview-in-sqlite
@@ -81,6 +82,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_IS_COMPLETED + " INTEGER DEFAULT 0, " +
                 // list position
                 COLUMN_PRIORITY + " INTEGER, " +
+                // is recurring?
+                COLUMN_RECURRING + " INTEGER, " +
                 // make category_id foreign key
                 "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " +
                 Category.TABLE_NAME + "("+Category._ID+")" + ");";
