@@ -101,11 +101,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     @Override
     public void onItemDismiss(int position) {
+
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         dbHelper.deleteTask(tasks.get(position).getId());
         dbHelper.close();
         tasks.remove(position);
         notifyItemRemoved(position);
+
     }
 
     public class TasksViewHolder extends RecyclerView.ViewHolder {
@@ -138,7 +140,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra(BUNDLE_EDIT_TASK_DESCRIPTION_KEY, t.getDescription());
                     editIntent.putExtra(BUNDLE_EDIT_TASK_COMPLETED_KEY, t.getIsCompleted() );
                     editIntent.putExtra(BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY, t.getColorPosition());
-                    editIntent.putExtra(BUNDLE_EDIT_TASK_RECURRING_SPINNER_POSITION_KEY, t.getRecurringSchedulePosition() );
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_RECURRING_SPINNER_POSITION_KEY, t.getRecurringSchedule() );
                     editIntent.putExtra(BUNDLE_EDIT_TASK_PRIORITY_KEY, t.getPriority());
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }

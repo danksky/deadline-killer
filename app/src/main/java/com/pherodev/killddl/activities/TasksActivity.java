@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
 
@@ -137,12 +138,55 @@ public class TasksActivity extends AppCompatActivity {
                 boolean isComplete = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_IS_COMPLETED)) != 0) ? true : false;
                 int color = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_COLOR));
                 int priority = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_PRIORITY));
+                int recurringSchedule = cursor.getInt(cursor.getColumnIndex((DatabaseHelper.Task.COLUMN_RECURRING)));
+
+
+                if(recurringSchedule != 0){
+                    Date date = new Date();
+                    if( date.after(deadline) ){
+
+
+                        long diff = date.getTime() - deadline.getTime();
+                        int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+                        int recurrenceInterval = 1;
+                        switch (recurringSchedule){
+                            case 2:
+                                recurrenceInterval = 7;
+                                break;
+                            case 3:
+                                recurrenceInterval = 30;
+                                break;
+                        }
+                        int numNewTasks = days/recurrenceInterval + 1;
+
+                        for(int i = 1; i <= numNewTasks; i++){
+                            Date newDeadline = new Date(deadline.getTime() + (i * recurrenceInterval * TimeUnit.MILLISECONDS.convert(1,TimeUnit.DAYS) ) );
+
+                            int nextRecurringSched = 0;
+                            if(i == numNewTasks){
+                                nextRecurringSched = recurringSchedule;
+                            }
+
+                            long newId = database.createTask(categoryId,title,description, newDeadline.toString() , false, color, priority, nextRecurringSched );
+                            tasks.add(new Task(newId, categoryId, title, description, newDeadline, isComplete, color, priority, recurringSchedule));
+
+                        }
+
+                        database.updateTask(id,categoryId,title,description, deadline.toString(),isComplete,color,priority,0);
+                        recurringSchedule = 0;
+
+
+                    }
+
+
+                }
 
                 // Initialize new task and add to tasks ArrayList
-                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color, priority));
+                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule));
 
                 System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
-                        " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color + " PRIORITY " + priority);
+                        " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color + " PRIORITY " + priority + " RECURRING SCHEDULE " + recurringSchedule);
+
             }
         } catch (ParseException e) {
             e.printStackTrace();

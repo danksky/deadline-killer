@@ -21,9 +21,9 @@ public class Task implements Parcelable {
     private int color;
     private boolean isCompleted;
     private int priority;
-    private String recurringSchedule;
+    private int recurringSchedule;
 
-    public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted, int color, int priority) {
+    public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted, int color, int priority, int recurringSchedule) {
         this.id = id;
         this.categoryId = categoryId;
         this.title = title;
@@ -32,6 +32,7 @@ public class Task implements Parcelable {
         this.isCompleted = isCompleted;
         this.color = color;
         this.priority = priority;
+        this.recurringSchedule = recurringSchedule;
     }
 
     protected Task(Parcel in) {
@@ -94,28 +95,27 @@ public class Task implements Parcelable {
     }
 
     public int getColorPosition() {
-        switch(color) {
-            case -65536 : return 0; // red
-            case -16776961 : return 1;
-            case -16711936 : return 2;
-            case -8388480 : return 3;
-            default: return 0;
-        }
-    }
-
-    public int getRecurringSchedulePosition() {
-        switch(recurringSchedule) {
-            case "None" : return 0;
-            case "Daily" : return 1;
-            case "Weekly" : return 2;
-            case "Monthly" : return 3;
-            default: return 0;
+        switch (color) {
+            case -65536:
+                return 0; // red
+            case -16776961:
+                return 1;
+            case -16711936:
+                return 2;
+            case -8388480:
+                return 3;
+            default:
+                return 0;
         }
     }
 
     public void setColor(int color) {
         this.color = color;
     }
+
+    public void setRecurringSchedule(int recurringSchedule){ this.recurringSchedule = recurringSchedule; }
+
+    public int getRecurringSchedule(){ return this.recurringSchedule;}
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;

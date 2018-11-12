@@ -206,6 +206,7 @@ public class TaskInputActivity extends AppCompatActivity {
         String deadlineText = deadline.toString();
         boolean isCompleted = completedCheckBox.isChecked();
         int color = Color.parseColor(colorSpinner.getSelectedItem().toString());
+        int recurringSchedule = recurringSpinner.getSelectedItemPosition();
         System.out.println("COLOR SELECTED = " + color);
 
         // Place into DB
@@ -215,8 +216,8 @@ public class TaskInputActivity extends AppCompatActivity {
         if (editMode) {
             taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
             int priority = extrasIntent.getExtras().getInt(TasksAdapter.BUNDLE_EDIT_TASK_PRIORITY_KEY);
-            database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority);
-        } else taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount);
+            database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority, recurringSchedule);
+        } else taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount, recurringSchedule);
         database.close();
 
         // Schedule / modify notification

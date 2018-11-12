@@ -133,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public long createTask(long categoryId, String title, String description , String deadline, boolean isComplete, int color, int priority){
+    public long createTask(long categoryId, String title, String description , String deadline, boolean isComplete, int color, int priority, int recurringSchedule){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
         values.put(Task.COLUMN_DESCRIPTION, description);
@@ -142,12 +142,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Task.COLUMN_IS_COMPLETED, isComplete);
         values.put(Task.COLUMN_COLOR, color);
         values.put(Task.COLUMN_PRIORITY, priority);
+        values.put(Task.COLUMN_RECURRING, recurringSchedule);
 
         return getWritableDatabase().insert(Task.TABLE_NAME, null, values);
 
     }
 
-    public void updateTask(long taskId, long categoryId, String title, String description , String deadline, Boolean isCompleted, int color, int priority){
+    public void updateTask(long taskId, long categoryId, String title, String description , String deadline, Boolean isCompleted, int color, int priority, int recurringSchedule){
 
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_TITLE, title);
@@ -158,6 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Task.COLUMN_IS_COMPLETED, completedInt);
         values.put(Task.COLUMN_COLOR, color);
         values.put(Task.COLUMN_PRIORITY, priority);
+        values.put(Task.COLUMN_RECURRING, recurringSchedule);
         String[] args = {Long.toString(taskId)};
 
         getWritableDatabase().update(Task.TABLE_NAME, values, Task.WHERE_ID, args);
@@ -216,7 +218,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 boolean isComplete = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_IS_COMPLETED)) != 0) ? true : false;
                 int color = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_COLOR));
                 int priority = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.Task.COLUMN_PRIORITY));
-                task = new com.pherodev.killddl.models.Task(id, categoryId, title, description, deadline, isComplete, color, priority);
+                int recurringSchedule = cursor.getInt(cursor.getColumnIndex(Task.COLUMN_RECURRING));
+                task = new com.pherodev.killddl.models.Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule);
             }
         } catch (ParseException e) {
             e.printStackTrace();
