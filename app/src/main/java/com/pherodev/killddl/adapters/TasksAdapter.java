@@ -89,7 +89,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         System.out.println(dbHelper.shiftPriority(
                 tasks.get(fromPosition).getPriority(),
                 tasks.get(fromPosition).getId(),
-                tasks.get(toPosition)  .getPriority()));
+                tasks.get(toPosition)  .getPriority(),
+                tasks.get(toPosition)  .getId()));
         // Swap runtime priorities and adapter positions
         int tempPriority = tasks.get(fromPosition).getPriority();
         tasks.get(fromPosition).setPriority(tasks.get(toPosition).getPriority());

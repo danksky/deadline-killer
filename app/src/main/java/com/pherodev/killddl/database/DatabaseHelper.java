@@ -230,31 +230,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return task;
     }
 
-    public String shiftPriority(int fromPriority, long fromId, int toPriority) {
-        // increment position
-        if (toPriority > fromPriority) {
-            String shiftAllUp = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
-                    + "=" + Task.COLUMN_PRIORITY + "-1 WHERE " + Task.COLUMN_PRIORITY + ">" + fromPriority + " AND " + Task.COLUMN_PRIORITY + "<=" + toPriority +";";
-            // move other items
-            getWritableDatabase().execSQL(shiftAllUp);
-            // move
-            String moveOneDown = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
-                    + "=" + toPriority + " WHERE " + Task.COLUMN_PRIORITY + "=" + fromPriority +" AND " + BaseColumns._ID + "=" + fromId + ";";
-            getWritableDatabase().execSQL(moveOneDown);
-            return shiftAllUp + "\n" + moveOneDown;
-        }
-        // decrement position
-        else if (toPriority < fromPriority) {
-            String shiftAllDown = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
-                    + "=" + Task.COLUMN_PRIORITY + "+1 WHERE " + Task.COLUMN_PRIORITY + ">=" + toPriority + " AND " + Task.COLUMN_PRIORITY + "<" + fromPriority +";";
-            // move other items
-            getWritableDatabase().execSQL(shiftAllDown);
-            // move
-            String moveOneUp = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY
-                    + "=" + toPriority + " WHERE " + Task.COLUMN_PRIORITY + "=" + fromPriority +" AND " + BaseColumns._ID + "=" + fromId + ";";
-            getWritableDatabase().execSQL(moveOneUp);
-            return shiftAllDown + "\n" + moveOneUp;
-        }
-        return "";
+    public String shiftPriority(int fromPriority, long fromId, int toPriority, long toId) {
+
+        String swapOne = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY + "=" + toPriority
+                + " WHERE " + BaseColumns._ID + "=" + fromId + ";";
+        getWritableDatabase().execSQL(swapOne);
+        String swapTwo = "UPDATE " + Task.TABLE_NAME + " SET " + Task.COLUMN_PRIORITY + "=" + fromPriority
+                + " WHERE " + BaseColumns._ID + "=" + toId + ";";
+        getWritableDatabase().execSQL(swapTwo);
+        return "\n" + swapOne + "\n" + swapTwo;
     }
 }
