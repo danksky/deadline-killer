@@ -7,12 +7,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
+import android.os.VibrationEffect;
 import android.support.v4.app.NotificationCompat;
 
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.activities.CategoryActivity;
 import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.models.Task;
+import com.pherodev.killddl.notifications.NotificationsHelper;
 
 
 public class NotificationPublisher extends BroadcastReceiver {
@@ -38,8 +40,10 @@ public class NotificationPublisher extends BroadcastReceiver {
                 .setContentText(task.getDescription())
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setChannelId(NotificationsHelper.CHANNEL_ID)
 //                .setLargeIcon(((BitmapDrawable) getApplicationContext().getResources().getDrawable(R.drawable.ic_launcher_foreground)).getBitmap())
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setVibrate(new long[5])
                 .setPriority(Notification.PRIORITY_MAX)
                 .setContentIntent(pendingLaunchIntent);
 
