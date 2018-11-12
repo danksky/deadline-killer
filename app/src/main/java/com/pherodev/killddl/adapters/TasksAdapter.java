@@ -34,6 +34,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     public static final String BUNDLE_EDIT_TASK_DESCRIPTION_KEY = "EDIT_TASK_DESCRIPTION";
     public static final String BUNDLE_EDIT_TASK_COMPLETED_KEY = "EDIT_TASK_COMPLETED";
     public static final String BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY = "EDIT_TASK_COLOR_SPINNER_POSITION";
+    public static final String BUNDLE_EDIT_TASK_RECURRING_SPINNER_POSITION_KEY = "EDIT_TASK_RECURRING_SPINNER_POSITION";
     public static final String BUNDLE_EDIT_TASK_PRIORITY_KEY = "EDIT_TASK_PRIORITY";
 
     public TasksAdapter(ArrayList<Task> tasks) {
@@ -137,6 +138,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                     editIntent.putExtra(BUNDLE_EDIT_TASK_DESCRIPTION_KEY, t.getDescription());
                     editIntent.putExtra(BUNDLE_EDIT_TASK_COMPLETED_KEY, t.getIsCompleted() );
                     editIntent.putExtra(BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY, t.getColorPosition());
+                    editIntent.putExtra(BUNDLE_EDIT_TASK_RECURRING_SPINNER_POSITION_KEY, t.getRecurringSchedulePosition() );
                     editIntent.putExtra(BUNDLE_EDIT_TASK_PRIORITY_KEY, t.getPriority());
                     ((Activity)view.getContext()).startActivityForResult(editIntent, TasksActivity.TASK_EDIT_REQUEST);
                 }

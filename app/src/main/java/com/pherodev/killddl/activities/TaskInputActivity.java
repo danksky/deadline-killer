@@ -39,6 +39,8 @@ public class TaskInputActivity extends AppCompatActivity {
 
     private Spinner colorSpinner;
     private List<String> colors;
+    private Spinner recurringSpinner;
+    private List<String> scheduleOptions;
 
     private int taskCount;
     private long categoryId;
@@ -60,6 +62,17 @@ public class TaskInputActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String colorString = ((TextView) parent.getChildAt(0)).getText().toString();
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor(colorString));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        recurringSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -146,6 +159,17 @@ public class TaskInputActivity extends AppCompatActivity {
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             colorSpinner.setAdapter(dataAdapter);
 
+            // recurring spinner stuff
+            recurringSpinner = (Spinner) findViewById(R.id.spinner_input_task_recurring);
+            scheduleOptions = new ArrayList<String>();
+            scheduleOptions.add("None");
+            scheduleOptions.add("Daily");
+            scheduleOptions.add("Weekly");
+            scheduleOptions.add("Monthly");
+            ArrayAdapter<String> schedDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, scheduleOptions);
+            schedDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            recurringSpinner.setAdapter(schedDataAdapter);
+
             // Edit mode - populate fields
             if (editMode) {
                 categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
@@ -158,6 +182,7 @@ public class TaskInputActivity extends AppCompatActivity {
                 descriptionEditText.setText(extras.getString(TasksAdapter.BUNDLE_EDIT_TASK_DESCRIPTION_KEY));
                 completedCheckBox.setChecked(extras.getBoolean(TasksAdapter.BUNDLE_EDIT_TASK_COMPLETED_KEY));
                 colorSpinner.setSelection(extras.getInt(TasksAdapter.BUNDLE_EDIT_TASK_COLOR_SPINNER_POSITION_KEY));
+                recurringSpinner.setSelection(extras.getInt(TasksAdapter.BUNDLE_EDIT_TASK_RECURRING_SPINNER_POSITION_KEY));
 
             } else {
                 // Functions as the newly entered Task's priority

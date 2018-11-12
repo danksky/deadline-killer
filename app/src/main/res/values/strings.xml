@@ -9,4 +9,5 @@
 <string name="activity_task_input_description_placeholder">Description</string>
 <string name="title_activity_task_list_input">TaskListInputActivity</string>
 <string name="spinner_input_task_color_title">Color</string>
+<string name="spinner_input_task_recurring_title">Schedule Recurring</string>
 </resources>

@@ -21,6 +21,7 @@ public class Task implements Parcelable {
     private int color;
     private boolean isCompleted;
     private int priority;
+    private String recurringSchedule;
 
     public Task (long id, long categoryId, String title, String description, Date deadline, Boolean isCompleted, int color, int priority) {
         this.id = id;
@@ -98,6 +99,16 @@ public class Task implements Parcelable {
             case -16776961 : return 1;
             case -16711936 : return 2;
             case -8388480 : return 3;
+            default: return 0;
+        }
+    }
+
+    public int getRecurringSchedulePosition() {
+        switch(recurringSchedule) {
+            case "None" : return 0;
+            case "Daily" : return 1;
+            case "Weekly" : return 2;
+            case "Monthly" : return 3;
             default: return 0;
         }
     }
