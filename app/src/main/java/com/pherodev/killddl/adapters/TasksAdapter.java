@@ -19,6 +19,7 @@ import com.pherodev.killddl.database.DatabaseHelper;
 import com.pherodev.killddl.gestures.ItemTouchHelperAdapter;
 import com.pherodev.killddl.models.Task;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -69,6 +70,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         holder.taskDeadline.setText(tasks.get(position).getDeadline().toString());
         holder.taskDescription.setText(tasks.get(position).getDescription());
+        holder.taskHoursRemaining.setText(tasks.get(position).getHoursRemaining());
         holder.colorFlag.setBackgroundColor(tasks.get(position).getColor());
     }
 
@@ -117,6 +119,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         TextView taskTitle;
         TextView taskDeadline;
         TextView taskDescription;
+        TextView taskHoursRemaining;
         View colorFlag;
 
         public TasksViewHolder(final View itemView) {
@@ -125,6 +128,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             taskTitle       = (TextView) itemView.findViewById(R.id.text_view_task_title);
             taskDeadline    = (TextView) itemView.findViewById(R.id.text_view_task_deadline);
             taskDescription = (TextView) itemView.findViewById(R.id.text_view_task_description);
+            taskHoursRemaining = (TextView) itemView.findViewById(R.id.text_view_task_hours_remaining);
             colorFlag       = (View) itemView.findViewById(R.id.view_task_color);
 
             itemView.setOnClickListener(new View.OnClickListener() {
