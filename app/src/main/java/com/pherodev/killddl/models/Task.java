@@ -3,7 +3,11 @@ package com.pherodev.killddl.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Task implements Parcelable {
 
@@ -141,4 +145,20 @@ public class Task implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(description);
     }
+
+    public String getHoursRemaining(){
+        String hoursRemaining = "hours";
+
+        Date now = new Date();
+        long timeRemaining = (now.getTime() - deadline.getTime()) / 3600000;
+        timeRemaining = Math.abs(timeRemaining);
+        if(timeRemaining > 100){
+            hoursRemaining = "100+";
+        }else{
+            hoursRemaining = Long.toString(timeRemaining);
+        }
+
+        return hoursRemaining + " hours remaining";
+    }
+
 }
