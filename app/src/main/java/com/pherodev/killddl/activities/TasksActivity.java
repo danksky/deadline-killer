@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.PriorityComparator;
 import com.pherodev.killddl.adapters.TasksAdapter;
@@ -34,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
 
-    private CalendarView tasksCalendarView;
+    private CompactCalendarView tasksCalendarView;
     private RecyclerView tasksRecyclerView;
     private TasksAdapter tasksAdapter;
     private RecyclerView.LayoutManager tasksLayoutManager;
@@ -97,7 +99,7 @@ public class TasksActivity extends AppCompatActivity {
 
     private void initializeUI() {
         selectedDate = new Date();
-        tasksCalendarView = (CalendarView) findViewById(R.id.calendar_view_tasks);
+        tasksCalendarView = (CompactCalendarView) findViewById(R.id.calendar_view_tasks);
         Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
         if (extras != null && extras.containsKey(CategoryActivity.CATEGORY_ID_KEY)) {
             categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
@@ -110,12 +112,17 @@ public class TasksActivity extends AppCompatActivity {
             finish();
         }
 
-        tasksCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        tasksCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                selectedDate = new GregorianCalendar( year, month, dayOfMonth+1 ).getTime();
+            public void onDayClick(Date dateClicked) {
+                selectedDate.setTime(dateClicked.getTime()+86400000);
                 Log.d("onSelectedDayChange", Long.toString(selectedDate.getTime()/86400000));
                 filter(selectedDate);
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+
             }
         });
 
@@ -232,9 +239,13 @@ public class TasksActivity extends AppCompatActivity {
 
     private void filter(Date selectedDate) {
         filteredTasks.clear();
+        tasksCalendarView.removeAllEvents();
         for (Task t : tasks) {
-            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000)
+            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000) {
+                Event e = new Event(t.getColor(), t.getDeadline().getTime());
+                tasksCalendarView.addEvent(e);
                 filteredTasks.add(t);
+            }
         }
         Collections.sort(filteredTasks, new PriorityComparator());
         if (tasksAdapter != null)
