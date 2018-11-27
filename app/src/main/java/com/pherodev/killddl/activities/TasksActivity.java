@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+import android.widget.CalendarView;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
@@ -26,10 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
 
+    private CalendarView tasksCalendarView;
     private RecyclerView tasksRecyclerView;
     private TasksAdapter tasksAdapter;
     private RecyclerView.LayoutManager tasksLayoutManager;
@@ -40,6 +45,8 @@ public class TasksActivity extends AppCompatActivity {
 
     private long categoryId;
     private String categoryTitle;
+    private Date selectedDate;
+    private ArrayList<Task> filteredTasks;
     private ArrayList<Task> tasks;
 
     public static final int TASK_CREATE_REQUEST = 1;
@@ -89,6 +96,8 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
+        selectedDate = new Date();
+        tasksCalendarView = (CalendarView) findViewById(R.id.calendar_view_tasks);
         Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
         if (extras != null && extras.containsKey(CategoryActivity.CATEGORY_ID_KEY)) {
             categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
@@ -101,11 +110,20 @@ public class TasksActivity extends AppCompatActivity {
             finish();
         }
 
+        tasksCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                selectedDate = new GregorianCalendar( year, month, dayOfMonth+1 ).getTime();
+                Log.d("onSelectedDayChange", Long.toString(selectedDate.getTime()/86400000));
+                filter(selectedDate);
+            }
+        });
+
         // Setup RecyclerView, LayoutManager, and Adapter
         tasksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_tasks);
         tasksRecyclerView.setHasFixedSize(true);
         tasksLayoutManager = new LinearLayoutManager(this);
-        tasksAdapter = new TasksAdapter(tasks);
+        tasksAdapter = new TasksAdapter(filteredTasks);
         tasksRecyclerView.setLayoutManager(tasksLayoutManager);
         tasksRecyclerView.setAdapter(tasksAdapter);
         callback = new SimpleItemTouchHelperCallback(tasksAdapter);
@@ -119,6 +137,8 @@ public class TasksActivity extends AppCompatActivity {
     public void loadTasksFromDB() {
         if (this.tasks == null)
             this.tasks = new ArrayList<>();
+        if (this.filteredTasks == null)
+            this.filteredTasks = new ArrayList<>();
         tasks.clear();
 
         DatabaseHelper database = new DatabaseHelper(this);
@@ -196,6 +216,7 @@ public class TasksActivity extends AppCompatActivity {
             database.close();
             // TODO: Implement some default sort type.
             Collections.sort(tasks, new PriorityComparator());
+            filter(selectedDate);
         }
 
     }
@@ -207,6 +228,17 @@ public class TasksActivity extends AppCompatActivity {
             tasks.remove(position);
             tasksRecyclerView.getAdapter().notifyItemRemoved(position);
         }
+    }
+
+    private void filter(Date selectedDate) {
+        filteredTasks.clear();
+        for (Task t : tasks) {
+            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000)
+                filteredTasks.add(t);
+        }
+        Collections.sort(filteredTasks, new PriorityComparator());
+        if (tasksAdapter != null)
+            tasksAdapter.notifyDataSetChanged();
     }
 
     public void programaticallyDeleteLastTask() {
