@@ -76,6 +76,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         // If the deadline is happened before the current time, then set it as past due.
         if(tasks.get(position).getDeadline().before(new java.util.Date())) {
             holder.taskDeadline.setBackgroundColor(context.getResources().getColor(R.color.colorPastDue));
+            System.out.println("PAST DEADLINE");
+        }
+        else {
+            holder.taskDeadline.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
     }

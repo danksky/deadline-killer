@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorPastDue">#ec9488</color>
     <color name="kill_ddl_blue">#298FCA</color>
+    <color name="white">#FFFFFF</color>
+
 </resources>
