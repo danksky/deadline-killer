@@ -72,6 +72,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         holder.taskDescription.setText(tasks.get(position).getDescription());
         holder.taskHoursRemaining.setText(tasks.get(position).getHoursRemaining());
         holder.colorFlag.setBackgroundColor(tasks.get(position).getColor());
+
+        // If the deadline is happened before the current time, then set it as past due.
+        if(tasks.get(position).getDeadline().before(new java.util.Date())) {
+            holder.taskDeadline.setBackgroundColor(context.getResources().getColor(R.color.colorPastDue));
+        }
+
     }
 
     // Return the size of the dataset (invoked by the layout manager)
