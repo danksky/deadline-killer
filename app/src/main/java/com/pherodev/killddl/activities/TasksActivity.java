@@ -147,6 +147,7 @@ public class TasksActivity extends AppCompatActivity {
         if (this.filteredTasks == null)
             this.filteredTasks = new ArrayList<>();
         tasks.clear();
+        tasksCalendarView.removeAllEvents();
 
         DatabaseHelper database = new DatabaseHelper(this);
         // Get all tasks by category Id
@@ -209,8 +210,10 @@ public class TasksActivity extends AppCompatActivity {
                 }
 
                 // Initialize new task and add to tasks ArrayList
-                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule));
-
+                Task t = new Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule);
+                tasks.add(t);
+                Event e = new Event(t.getColor(), t.getDeadline().getTime(), t.getTitle());
+                tasksCalendarView.addEvent(e);
                 System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
                         " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color + " PRIORITY " + priority + " RECURRING SCHEDULE " + recurringSchedule);
 
@@ -242,8 +245,6 @@ public class TasksActivity extends AppCompatActivity {
         tasksCalendarView.removeAllEvents();
         for (Task t : tasks) {
             if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000) {
-                Event e = new Event(t.getColor(), t.getDeadline().getTime());
-                tasksCalendarView.addEvent(e);
                 filteredTasks.add(t);
             }
         }
