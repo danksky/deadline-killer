@@ -16,8 +16,6 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
-import com.github.sundeepk.compactcalendarview.CompactCalendarView;
-import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.pherodev.killddl.R;
 import com.pherodev.killddl.adapters.PriorityComparator;
 import com.pherodev.killddl.adapters.TasksAdapter;
@@ -36,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
 
-    private CompactCalendarView tasksCalendarView;
+    private CalendarView tasksCalendarView;
     private RecyclerView tasksRecyclerView;
     private TasksAdapter tasksAdapter;
     private RecyclerView.LayoutManager tasksLayoutManager;
@@ -98,31 +96,25 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        selectedDate = new Date();
-        tasksCalendarView = (CompactCalendarView) findViewById(R.id.calendar_view_tasks);
+        selectedDate = new Date(new Date().getTime()+86400000);
+        tasksCalendarView = (CalendarView) findViewById(R.id.calendar_view_tasks);
         Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
         if (extras != null && extras.containsKey(CategoryActivity.CATEGORY_ID_KEY)) {
             categoryId = extras.getLong(CategoryActivity.CATEGORY_ID_KEY);
             loadTasksFromDB();
             setTitle(categoryTitle + " Deadlines");
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), "ERROR: Starting " + this.getClass().getName(), Toast.LENGTH_SHORT);
             setResult(CategoryActivity.RESULT_CANCELED);
             finish();
         }
 
-        tasksCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+        tasksCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
-            public void onDayClick(Date dateClicked) {
-                selectedDate.setTime(dateClicked.getTime()+86400000);
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                selectedDate = new GregorianCalendar( year, month, dayOfMonth+1 ).getTime();
                 Log.d("onSelectedDayChange", Long.toString(selectedDate.getTime()/86400000));
                 filter(selectedDate);
-            }
-
-            @Override
-            public void onMonthScroll(Date firstDayOfNewMonth) {
-
             }
         });
 
@@ -147,7 +139,6 @@ public class TasksActivity extends AppCompatActivity {
         if (this.filteredTasks == null)
             this.filteredTasks = new ArrayList<>();
         tasks.clear();
-        tasksCalendarView.removeAllEvents();
 
         DatabaseHelper database = new DatabaseHelper(this);
         // Get all tasks by category Id
@@ -210,10 +201,8 @@ public class TasksActivity extends AppCompatActivity {
                 }
 
                 // Initialize new task and add to tasks ArrayList
-                Task t = new Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule);
-                tasks.add(t);
-                Event e = new Event(t.getColor(), t.getDeadline().getTime(), t.getTitle());
-                tasksCalendarView.addEvent(e);
+                tasks.add(new Task(id, categoryId, title, description, deadline, isComplete, color, priority, recurringSchedule));
+
                 System.out.println("ADDING " + "ID " + id + " CATEGORYID " + categoryId +
                         " TITLE " + title + " DESCRIPTION " + description + " DEADLINE " + deadline + " COMPLETED " + isComplete + " COLOR " + color + " PRIORITY " + priority + " RECURRING SCHEDULE " + recurringSchedule);
 
@@ -242,11 +231,9 @@ public class TasksActivity extends AppCompatActivity {
 
     private void filter(Date selectedDate) {
         filteredTasks.clear();
-        tasksCalendarView.removeAllEvents();
         for (Task t : tasks) {
-            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000) {
+            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000)
                 filteredTasks.add(t);
-            }
         }
         Collections.sort(filteredTasks, new PriorityComparator());
         if (tasksAdapter != null)
