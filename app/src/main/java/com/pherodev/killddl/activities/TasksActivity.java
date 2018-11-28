@@ -3,6 +3,7 @@ package com.pherodev.killddl.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -12,8 +13,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
@@ -30,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
@@ -49,10 +56,92 @@ public class TasksActivity extends AppCompatActivity {
     private ArrayList<Task> filteredTasks;
     private ArrayList<Task> tasks;
 
+    // MENU
+    private DisplayMode tasksDisplayMode;
+    private MenuItem tasksDisplayCalendarItem;
+    private MenuItem tasksDisplayListItem;
+    private MenuItem sortTaskSpinnerItem;
+    private Spinner sortSpinner;
+
     public static final int TASK_CREATE_REQUEST = 1;
     public static final int TASK_EDIT_REQUEST = 2;
 
     public static final String NEWEST_TASK_COUNT_KEY = "TASK_COUNT";
+
+    enum DisplayMode {
+        DISPLAY_CALENDAR, DISPLAY_LIST
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.display_menu, menu);
+        tasksDisplayCalendarItem =  menu.findItem(R.id.action_calendar);
+        tasksDisplayListItem =  menu.findItem(R.id.action_list);
+        tasksDisplayCalendarItem.setVisible(false);
+
+        // setup sortBy spinner
+        sortTaskSpinnerItem = menu.findItem(R.id.sort_spinner);
+        sortSpinner = (Spinner) sortTaskSpinnerItem.getActionView();
+
+        List<String> sortOptions = new ArrayList<>();
+        sortOptions.add("By Priority");
+        sortOptions.add("By Deadline");
+        sortOptions.add("By Color");
+
+        ArrayAdapter<String> sortDataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortOptions);
+        sortDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(sortDataAdapter);
+
+
+//         Setup sortBy toolbar dropdown selected listener
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+//                switch (position){
+//                    case 0:
+//                        taskSortMode = SortMode.PRIORITY;
+//                        callback.isSortByPriority = true;
+//                        Collections.sort(tasks, new PriorityComparator());
+//                        break;
+//                    case 1:
+//                        taskSortMode = SortMode.CHRONOLOGICAL;
+//                        Collections.sort(tasks, new DateComparator());
+//                        callback.isSortByPriority = false;
+//                        break;
+//                    case 2:
+//                        taskSortMode = SortMode.COLOR;
+//                        Collections.sort(tasks, new ColorComparator());
+//                        callback.isSortByPriority = false;
+//                }
+//
+//                updateUI(DisplayMode.DISPLAY_LIST);
+
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_calendar:
+                tasksDisplayMode = DisplayMode.DISPLAY_CALENDAR;
+                updateUI(tasksDisplayMode);
+                break;
+            case R.id.action_list:
+                tasksDisplayMode = DisplayMode.DISPLAY_LIST;
+                updateUI(tasksDisplayMode);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +185,7 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
+        tasksDisplayMode = DisplayMode.DISPLAY_CALENDAR;
         selectedDate = new Date(new Date().getTime()+86400000);
         tasksCalendarView = (CalendarView) findViewById(R.id.calendar_view_tasks);
         Bundle extras = (getIntent() == null ? null : getIntent().getExtras());
@@ -130,6 +220,23 @@ public class TasksActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
         // Setup FAB
         createTaskFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_create_task);
+    }
+
+    private void updateUI (DisplayMode displayMode) {
+        switch (displayMode) {
+            case DISPLAY_CALENDAR:
+                tasksDisplayListItem.setVisible(true);
+                tasksDisplayCalendarItem.setVisible(false);
+                tasksCalendarView.setVisibility(View.VISIBLE);
+                filter(selectedDate);
+                break;
+            case DISPLAY_LIST:
+                tasksDisplayListItem.setVisible(false);
+                tasksDisplayCalendarItem.setVisible(true);
+                tasksCalendarView.setVisibility(View.GONE);
+                unfilter();
+                break;
+        }
     }
 
     // TODO: Move this Cursor magic to DatabaseHelper
@@ -236,6 +343,15 @@ public class TasksActivity extends AppCompatActivity {
                 filteredTasks.add(t);
         }
         Collections.sort(filteredTasks, new PriorityComparator());
+        if (tasksAdapter != null)
+            tasksAdapter.notifyDataSetChanged();
+    }
+
+    private void unfilter() {
+        // This here is jank. Lol. 
+        loadTasksFromDB();
+        filteredTasks.clear();
+        filteredTasks.addAll(tasks);
         if (tasksAdapter != null)
             tasksAdapter.notifyDataSetChanged();
     }

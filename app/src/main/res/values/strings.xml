@@ -10,4 +10,8 @@
 <string name="title_activity_task_list_input">TaskListInputActivity</string>
 <string name="spinner_input_task_color_title">Color</string>
 <string name="spinner_input_task_recurring_title">Schedule Recurring</string>
+
+    <string name="display_calendar">Calendar</string>
+    <string name="display_list">All</string>
+    <string name="sortbyspinner">sortBySpinner</string>
 </resources>

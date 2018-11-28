@@ -8,6 +8,8 @@
     tools:context=".activities.TasksActivity"
     tools:showIn="@layout/activity_tasks">
 
+
+
     <CalendarView
         android:id="@+id/calendar_view_tasks"
         android:layout_width="match_parent"
