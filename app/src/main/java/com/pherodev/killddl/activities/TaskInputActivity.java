@@ -217,7 +217,10 @@ public class TaskInputActivity extends AppCompatActivity {
             taskId = extrasIntent.getExtras().getLong(TasksAdapter.BUNDLE_EDIT_TASK_ID_KEY);
             int priority = extrasIntent.getExtras().getInt(TasksAdapter.BUNDLE_EDIT_TASK_PRIORITY_KEY);
             database.updateTask(taskId, categoryId, title, description, deadlineText, isCompleted, color, priority, recurringSchedule);
-        } else taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, taskCount, recurringSchedule);
+        } else {
+            int priority = extrasIntent.getExtras().getInt(TasksActivity.NEWEST_TASK_PRIORITY_KEY);
+            taskId = database.createTask(categoryId, title, description, deadlineText, isCompleted, color, priority, recurringSchedule);
+        }
         database.close();
 
         // Schedule / modify notification
