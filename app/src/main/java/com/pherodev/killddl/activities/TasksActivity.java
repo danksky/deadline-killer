@@ -16,10 +16,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pherodev.killddl.R;
+import com.pherodev.killddl.adapters.ColorComparator;
+import com.pherodev.killddl.adapters.DateComparator;
 import com.pherodev.killddl.adapters.PriorityComparator;
 import com.pherodev.killddl.adapters.TasksAdapter;
 import com.pherodev.killddl.database.DatabaseHelper;
@@ -31,8 +36,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TasksActivity extends AppCompatActivity {
@@ -42,7 +49,7 @@ public class TasksActivity extends AppCompatActivity {
     private TasksAdapter tasksAdapter;
     private RecyclerView.LayoutManager tasksLayoutManager;
     private ItemTouchHelper itemTouchHelper;
-    private ItemTouchHelper.Callback callback;
+    private SimpleItemTouchHelperCallback callback;
 
     private FloatingActionButton createTaskFloatingActionButton;
 
@@ -52,10 +59,17 @@ public class TasksActivity extends AppCompatActivity {
     private ArrayList<Task> filteredTasks;
     private ArrayList<Task> tasks;
 
+
+
+
     // MENU
     private DisplayMode tasksDisplayMode;
     private MenuItem tasksDisplayCalendarItem;
     private MenuItem tasksDisplayListItem;
+    private MenuItem sortTaskSpinnerItem;
+    private Spinner sortSpinner;
+    private SortMode taskSortMode;
+
 
     public static final int TASK_CREATE_REQUEST = 1;
     public static final int TASK_EDIT_REQUEST = 2;
@@ -66,12 +80,69 @@ public class TasksActivity extends AppCompatActivity {
         DISPLAY_CALENDAR, DISPLAY_LIST
     }
 
+    enum SortMode{
+        PRIORITY,DATE,COLOR
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.display_menu, menu);
         tasksDisplayCalendarItem =  menu.findItem(R.id.action_calendar);
         tasksDisplayListItem =  menu.findItem(R.id.action_list);
         tasksDisplayCalendarItem.setVisible(false);
+
+        // setup sortBy spinner
+        sortTaskSpinnerItem = menu.findItem(R.id.sort_spinner);
+        sortSpinner = (Spinner) sortTaskSpinnerItem.getActionView();
+
+        List<String> sortOptions = new ArrayList<>();
+        sortOptions.add("By Priority");
+        sortOptions.add("By Deadline");
+        sortOptions.add("By Color");
+
+        ArrayAdapter<String> sortDataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortOptions);
+        sortDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(sortDataAdapter);
+
+
+//         Setup sortBy toolbar dropdown selected listener
+
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position){
+                    case 0:
+                        taskSortMode = SortMode.PRIORITY;
+//                        sortComparator = new PriorityComparator();
+                        callback.enableLongPress();
+//                        Collections.sort(tasks, new PriorityComparator());
+                        break;
+                    case 1:
+                        taskSortMode = SortMode.DATE;
+//                        Collections.sort(tasks, new DateComparator());
+//                        sortComparator = new DateComparator();
+                        callback.disableLongPress();
+                        break;
+                    case 2:
+                        taskSortMode = SortMode.COLOR;
+//                        Collections.sort(tasks, new ColorComparator());
+//                        sortComparator = new ColorComparator();
+                        callback.disableLongPress();
+                }
+//
+                updateUI(DisplayMode.DISPLAY_LIST);
+
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -95,6 +166,8 @@ public class TasksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // init sortmode
+        taskSortMode = SortMode.PRIORITY;
         setSupportActionBar(toolbar);
 
         initializeUI();
@@ -110,6 +183,7 @@ public class TasksActivity extends AppCompatActivity {
                 startActivityForResult(launchInputIntent, TASK_CREATE_REQUEST);
             }
         });
+
     }
 
     @Override
@@ -267,8 +341,19 @@ public class TasksActivity extends AppCompatActivity {
         } finally {
             cursor.close();
             database.close();
-            // TODO: Implement some default sort type.
-            Collections.sort(tasks, new PriorityComparator());
+            // TODO: Implement some default sort type
+            switch (taskSortMode){
+                case PRIORITY:
+                    Collections.sort(tasks, new PriorityComparator());
+                    break;
+                case DATE:
+                    Collections.sort(tasks, new DateComparator());
+                    break;
+                case COLOR:
+                    Collections.sort(tasks, new ColorComparator());
+                    break;
+            }
+
             filter(selectedDate);
         }
 
@@ -289,7 +374,7 @@ public class TasksActivity extends AppCompatActivity {
             if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000)
                 filteredTasks.add(t);
         }
-        Collections.sort(filteredTasks, new PriorityComparator());
+        Collections.sort(filteredTasks, new DateComparator());
         if (tasksAdapter != null)
             tasksAdapter.notifyDataSetChanged();
     }

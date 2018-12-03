@@ -13,4 +13,6 @@
 
     <string name="display_calendar">Calendar</string>
     <string name="display_list">All</string>
+    <string name="sortbyspinner">sortBySpinner</string>
+
 </resources>
