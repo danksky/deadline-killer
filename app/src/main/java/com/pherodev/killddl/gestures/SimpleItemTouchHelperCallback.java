@@ -21,13 +21,23 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public static final float ALPHA_FULL = 1.0f;
 
     private final ItemTouchHelperAdapter ithAdapter;
+    private boolean longPressEnabled = true;
+
+    public void enableLongPress(){
+        this.longPressEnabled = true;
+    }
+
+    public void disableLongPress(){
+        this.longPressEnabled = false;
+    }
+
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
         ithAdapter = adapter;
     }
 
     @Override
-    public boolean isLongPressDragEnabled() { return true; }
+    public boolean isLongPressDragEnabled() { return longPressEnabled; }
 
     @Override
     public boolean isItemViewSwipeEnabled() {
