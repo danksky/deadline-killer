@@ -75,6 +75,7 @@ public class TasksActivity extends AppCompatActivity {
     public static final int TASK_EDIT_REQUEST = 2;
 
     public static final String NEWEST_TASK_COUNT_KEY = "TASK_COUNT";
+    public static final String NEWEST_TASK_PRIORITY_KEY = "TASK_PRIORITY";
 
     enum DisplayMode {
         DISPLAY_CALENDAR, DISPLAY_LIST
@@ -115,31 +116,22 @@ public class TasksActivity extends AppCompatActivity {
                 switch (position){
                     case 0:
                         taskSortMode = SortMode.PRIORITY;
-//                        sortComparator = new PriorityComparator();
                         callback.enableLongPress();
-//                        Collections.sort(tasks, new PriorityComparator());
                         break;
                     case 1:
                         taskSortMode = SortMode.DATE;
-//                        Collections.sort(tasks, new DateComparator());
-//                        sortComparator = new DateComparator();
                         callback.disableLongPress();
                         break;
                     case 2:
                         taskSortMode = SortMode.COLOR;
-//                        Collections.sort(tasks, new ColorComparator());
-//                        sortComparator = new ColorComparator();
                         callback.disableLongPress();
                 }
-//
                 updateUI(DisplayMode.DISPLAY_LIST);
 
 
             }
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
 
@@ -180,6 +172,10 @@ public class TasksActivity extends AppCompatActivity {
                 launchInputIntent.putExtra(CategoryActivity.CATEGORY_ID_KEY, categoryId);
                 launchInputIntent.putExtra(NEWEST_TASK_COUNT_KEY, tasks.size());
                 launchInputIntent.putExtra(TasksAdapter.BUNDLE_EDIT_TASK_MODE_KEY, false);
+                int priority = -1;
+                for (Task t : tasks)
+                    priority = Math.max(priority, t.getPriority());
+                launchInputIntent.putExtra(NEWEST_TASK_PRIORITY_KEY, priority+1);
                 startActivityForResult(launchInputIntent, TASK_CREATE_REQUEST);
             }
         });
@@ -341,7 +337,6 @@ public class TasksActivity extends AppCompatActivity {
         } finally {
             cursor.close();
             database.close();
-            // TODO: Implement some default sort type
             switch (taskSortMode){
                 case PRIORITY:
                     Collections.sort(tasks, new PriorityComparator());
@@ -371,7 +366,8 @@ public class TasksActivity extends AppCompatActivity {
     private void filter(Date selectedDate) {
         filteredTasks.clear();
         for (Task t : tasks) {
-            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000)
+            // If DISPLAY_LIST mode, add tasks indiscriminately.
+            if (t.getDeadline().getTime() / 86400000 == selectedDate.getTime() / 86400000 || tasksDisplayMode == DisplayMode.DISPLAY_LIST)
                 filteredTasks.add(t);
         }
         Collections.sort(filteredTasks, new DateComparator());
@@ -380,7 +376,7 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void unfilter() {
-        // This here is jank. Lol. 
+        // This here is jank. Lol.
         loadTasksFromDB();
         filteredTasks.clear();
         filteredTasks.addAll(tasks);
